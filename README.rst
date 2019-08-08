@@ -1,16 +1,16 @@
 TestFlows - Asserts
 ===================
 
-.. warning::
+.. warn::
 
-    This module is still work in progress and is currently under development.
-    Please use it only for reference.
+    **This module is still work in progress and is currently under development.
+    Please use it only for reference.**
 
 No magic, intuitive assertion library, with descriptive error messages
 that works with Python's *assert* statement. Inspired by *pytest* 
 support for assertions and *grappa-py/grappa* descriptive error messages.
 
-Currenly supports only Python 3.
+Currenly supports only Python 3.6 or above.
 
 Installation
 ************
@@ -58,7 +58,8 @@ produces the following output
         Where
           File 't.py', line 3 in '<module>'
         
-        0|  1|  from testflows.asserts import error
+        0|  
+        1|  from testflows.asserts import error
         2|
         3|> assert 1 == 2, error()
         
