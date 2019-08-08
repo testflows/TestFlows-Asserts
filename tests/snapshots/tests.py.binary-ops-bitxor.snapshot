@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert 1 ^ 3 is False, error()
+
+Assertion values
+  assert 1 ^ 3 is False, error()
+           ^ is = 2
+  assert 1 ^ 3 is False, error()
+               ^ is = False
+  assert 1 ^ 3 is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 225 in 'run'
+
+217|                      with raises(AssertionError) as e:
+218|                          assert 1 | 3 is False, error()
+219|                      test.note(e.exception)
+220|                      with this() as that:
+221|                          assert that(snapshot(e.exception, "binary-ops-bitOr", encoder=str)), error()
+222|  
+223|                  with subsuite.test("bitXor") as test:
+224|                      with raises(AssertionError) as e:
+225|>                         assert 1 ^ 3 is False, error()
+226|                      test.note(e.exception)
+227|                      with this() as that:
+228|                          assert that(snapshot(e.exception, "binary-ops-bitXor", encoder=str)), error()

@@ -1,0 +1,34 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert "hello".join([' ', 'there']) is False, error()
+
+Assertion values
+  assert "hello".join([' ', 'there']) is False, error()
+         ^ is 'hello'
+  assert "hello".join([' ', 'there']) is False, error()
+         ^ is = <built-in method join of str object at 0x7f054acfd378>
+  assert "hello".join([' ', 'there']) is False, error()
+                      ^ is = [' ', 'there']
+  assert "hello".join([' ', 'there']) is False, error()
+         ^ is = ' hellothere'
+  assert "hello".join([' ', 'there']) is False, error()
+                                      ^ is = False
+  assert "hello".join([' ', 'there']) is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 444 in 'run'
+
+436|                  
+437|                  with subsuite.test("attr access") as test:
+438|                      with raises(AssertionError) as e:
+439|                          assert object().__class__ is False, error()
+440|                      test.note(e.exception)
+441|                      
+442|                  with subsuite.test("attribute function call") as test:
+443|                      with raises(AssertionError) as e:
+444|>                         assert "hello".join([' ', 'there']) is False, error()
+445|                      test.note(e.exception)
+446|                      with this() as that:
+447|                          assert that(snapshot(e.exception, "common-idioms-attribute-function-call", encoder=str)), error()

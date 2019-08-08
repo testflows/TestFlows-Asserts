@@ -1,0 +1,26 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert u'hello' is False, error()
+
+Assertion values
+  assert u'hello' is False, error()
+                  ^ is = False
+  assert u'hello' is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 401 in 'run'
+
+393|                      with raises(AssertionError) as e:
+394|                          assert b'hello' is False, error()
+395|                      test.note(e.exception)
+396|                      with this() as that:
+397|                          assert that(snapshot(e.exception, "common-types-bytes", encoder=str)), error()
+398|                  
+399|                  with subsuite.test("unicode") as test:
+400|                      with raises(AssertionError) as e:
+401|>                         assert u'hello' is False, error()
+402|                      test.note(e.exception)
+403|                      with this() as that:
+404|                          assert that(snapshot(e.exception, "common-types-unicode", encoder=str)), error()

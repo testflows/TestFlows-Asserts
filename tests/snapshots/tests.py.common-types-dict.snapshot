@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert {'a':1} is False, error()
+
+Assertion values
+  assert {'a':1} is False, error()
+         ^ is = {'a': 1}
+  assert {'a':1} is False, error()
+                 ^ is = False
+  assert {'a':1} is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 375 in 'run'
+
+367|                      with raises(AssertionError) as e:
+368|                          assert (1,) is False, error()
+369|                      test.note(e.exception)
+370|                      with this() as that:
+371|                          assert that(snapshot(e.exception, "common-types-tuple", encoder=str)), error()
+372|                  
+373|                  with subsuite.test("dict") as test:
+374|                      with raises(AssertionError) as e:
+375|>                         assert {'a':1} is False, error()
+376|                      test.note(e.exception)
+377|                      with this() as that:
+378|                          assert that(snapshot(e.exception, "common-types-dict", encoder=str)), error()

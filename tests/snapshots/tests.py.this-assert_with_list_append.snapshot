@@ -1,0 +1,30 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert that(some_list.append(2)) == [1], error()
+
+Assertion values
+  assert that(some_list.append(2)) == [1], error()
+         ^ is = None
+  assert that(some_list.append(2)) == [1], error()
+                                      ^ is = [1]
+  assert that(some_list.append(2)) == [1], error()
+                                   ^ is = False
+  assert that(some_list.append(2)) == [1], error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 66 in 'run'
+
+58|                              assert not that(fp.read()), error()
+59|                          test.note(e.exception)
+60|                          with this() as that:
+61|                              assert that(snapshot(e.exception, "this-assert_with_file_read", encoder=str)), error()
+62|  
+63|                  with subsuite.test("assert with list append") as test:
+64|                      some_list = []
+65|                      with raises(AssertionError) as e, this() as that:
+66|>                         assert that(some_list.append(2)) == [1], error()
+67|                      test.note(e.exception)
+68|                      with test.test("assert that list did not change"):
+69|                          assert some_list == [2], error()

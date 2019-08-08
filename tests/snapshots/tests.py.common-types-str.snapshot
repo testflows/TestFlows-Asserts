@@ -1,0 +1,26 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert "hello" is False, error()
+
+Assertion values
+  assert "hello" is False, error()
+                 ^ is = False
+  assert "hello" is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 354 in 'run'
+
+346|                          assert 1 not in [1], error()
+347|                      test.note(e.exception)
+348|                      with this() as that:
+349|                          assert that(snapshot(e.exception, "compare-ops-not-in", encoder=str)), error()
+350|              
+351|              with suite.test("common types") as subsuite:
+352|                  with subsuite.test("str") as test:
+353|                      with raises(AssertionError) as e:
+354|>                         assert "hello" is False, error()
+355|                      test.note(e.exception)
+356|                      with this() as that:
+357|                          assert that(snapshot(e.exception, "common-types-str", encoder=str)), error()

@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert b'hello' is False, error()
+
+Assertion values
+  assert b'hello' is False, error()
+         ^ is b'hello'
+  assert b'hello' is False, error()
+                  ^ is = False
+  assert b'hello' is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 394 in 'run'
+
+386|                  
+387|                  with subsuite.test("object") as test:
+388|                      with raises(AssertionError) as e:
+389|                          assert object() is False, error()
+390|                      test.note(e.exception)
+391|                  
+392|                  with subsuite.test("bytes") as test:
+393|                      with raises(AssertionError) as e:
+394|>                         assert b'hello' is False, error()
+395|                      test.note(e.exception)
+396|                      with this() as that:
+397|                          assert that(snapshot(e.exception, "common-types-bytes", encoder=str)), error()

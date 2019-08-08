@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert {that(x) for x in range(f)} is False, error()
+
+Assertion values
+  assert {that(x) for x in range(f)} is False, error()
+         ^ is {0, 1, 2, 3, 4}
+  assert {that(x) for x in range(f)} is False, error()
+                                     ^ is = False
+  assert {that(x) for x in range(f)} is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 487 in 'run'
+
+479|                          assert foo([y*x for x in [[1],[2]] if len(x) > 0 for y in x if y > 0]) is False, error()
+480|                      test.note(e.exception)
+481|                      with this() as that:
+482|                          assert that(snapshot(e.exception, "common-idioms-list-comprehension", encoder=str)), error()
+483|  
+484|                  with subsuite.test("set comprehension") as test:
+485|                      with raises(AssertionError) as e, this() as that:
+486|                          f = 5
+487|>                         assert {that(x) for x in range(f)} is False, error()
+488|                      test.note(e.exception)
+489|                      with this() as that:
+490|                          assert that(snapshot(e.exception, "common-idioms-set-comprehension", encoder=str)), error()

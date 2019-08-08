@@ -1,0 +1,26 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert 1 is 2, error()
+
+Assertion values
+  assert 1 is 2, error()
+           ^ is = False
+  assert 1 is 2, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 325 in 'run'
+
+317|                      with raises(AssertionError) as e:
+318|                          assert 1 >= 2, error()
+319|                      test.note(e.exception)
+320|                      with this() as that:
+321|                          assert that(snapshot(e.exception, "compare-ops-ge", encoder=str)), error()
+322|                  
+323|                  with subsuite.test("is") as test:
+324|                      with raises(AssertionError) as e:
+325|>                         assert 1 is 2, error()
+326|                      test.note(e.exception)
+327|                      with this() as that:
+328|                          assert that(snapshot(e.exception, "compare-ops-is", encoder=str)), error()

@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert (lambda x: x)(1) is False, error()
+
+Assertion values
+  assert (lambda x: x)(1) is False, error()
+          ^ is = 1
+  assert (lambda x: x)(1) is False, error()
+                          ^ is = False
+  assert (lambda x: x)(1) is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 449 in 'run'
+
+441|                      
+442|                  with subsuite.test("attribute function call") as test:
+443|                      with raises(AssertionError) as e:
+444|                          assert "hello".join([' ', 'there']) is False, error()
+445|                      test.note(e.exception)
+446|  
+447|                  with subsuite.test("lambda name") as test:
+448|                      with raises(AssertionError) as e:
+449|>                         assert (lambda x: x)(1) is False, error()
+450|                      test.note(e.exception)
+451|                      with this() as that:
+452|                          assert that(snapshot(e.exception, "common-idioms-lambda-name", encoder=str)), error()

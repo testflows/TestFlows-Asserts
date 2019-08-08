@@ -1,0 +1,30 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert foo(x*x for x in range(2)) is False, error()
+
+Assertion values
+  assert foo(x*x for x in range(2)) is False, error()
+             ^ is <generator object <genexpr> at 0x7fc03d71eba0>
+  assert foo(x*x for x in range(2)) is False, error()
+         ^ is = <generator object <genexpr> at 0x7fc03d71eba0>
+  assert foo(x*x for x in range(2)) is False, error()
+                                    ^ is = False
+  assert foo(x*x for x in range(2)) is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 472 in 'run'
+
+464|                      test.note(e.exception)
+465|                      with this() as that:
+466|                          assert that(snapshot(e.exception, "common-idioms-getitem", encoder=str)), error()
+467|  
+468|                  with subsuite.test("generator expression") as test:
+469|                      def foo(x):
+470|                          return x
+471|                      with raises(AssertionError) as e:
+472|>                         assert foo(x*x for x in range(2)) is False, error()
+473|                      test.note(e.exception)
+474|                      with this() as that:
+475|                          assert that(snapshot(e.exception, "common-idioms-generator-expression", encoder=str)), error()

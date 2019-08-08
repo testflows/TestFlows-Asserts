@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert +4 is False, error()
+
+Assertion values
+  assert +4 is False, error()
+         ^ is = 4
+  assert +4 is False, error()
+            ^ is = False
+  assert +4 is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 268 in 'run'
+
+260|                      with raises(AssertionError) as e:
+261|                          assert not 4 is 4, error()
+262|                      test.note(e.exception)
+263|                      with this() as that:
+264|                          assert that(snapshot(e.exception, "unary-ops-not", encoder=str)), error()
+265|  
+266|                  with subsuite.test("uadd") as test:
+267|                      with raises(AssertionError) as e:
+268|>                         assert +4 is False, error()
+269|                      test.note(e.exception)
+270|                      with this() as that:
+271|                          assert that(snapshot(e.exception, "unary-ops-uadd", encoder=str)), error()

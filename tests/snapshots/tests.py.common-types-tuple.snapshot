@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert (1,) is False, error()
+
+Assertion values
+  assert (1,) is False, error()
+          ^ is = (1,)
+  assert (1,) is False, error()
+              ^ is = False
+  assert (1,) is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 368 in 'run'
+
+360|                      with raises(AssertionError) as e:
+361|                          assert [1] is False, error()
+362|                      test.note(e.exception)
+363|                      with this() as that:
+364|                          assert that(snapshot(e.exception, "common-types-list", encoder=str)), error()
+365|  
+366|                  with subsuite.test("tuple") as test:
+367|                      with raises(AssertionError) as e:
+368|>                         assert (1,) is False, error()
+369|                      test.note(e.exception)
+370|                      with this() as that:
+371|                          assert that(snapshot(e.exception, "common-types-tuple", encoder=str)), error()

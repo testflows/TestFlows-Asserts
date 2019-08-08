@@ -1,0 +1,20 @@
+Oops! Assertion failed
+
+Description
+  Exception (<class 'AssertionError'>,) was not raised
+
+Where
+  File 'tests/tests.py', line 15 in 'run'
+
+ 7|  from testflows.asserts import error, this, raises, snapshot 
+ 8|  
+ 9|  class Test(TestBase):
+10|      def run(self):
+11|          with self.test("helpers") as suite:
+12|              with suite.test("raises") as subsuite:
+13|                  with subsuite.test("not raised") as test:
+14|                      with raises(AssertionError) as e:
+15|>                         with raises(AssertionError):
+16|                              pass
+17|                      test.note(e.exception)
+18|                      assert snapshot(e.exception, "raises-not-raised", encoder=str)

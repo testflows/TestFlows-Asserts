@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert not 4 is 4, error()
+
+Assertion values
+  assert not 4 is 4, error()
+               ^ is = True
+  assert not 4 is 4, error()
+         ^ is = False
+  assert not 4 is 4, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 261 in 'run'
+
+253|                      with raises(AssertionError) as e:
+254|                          assert ~4 is False, error()
+255|                      test.note(e.exception)
+256|                      with this() as that:
+257|                          assert that(snapshot(e.exception, "unary-ops-invert", encoder=str)), error()
+258|  
+259|                  with subsuite.test("not") as test:
+260|                      with raises(AssertionError) as e:
+261|>                         assert not 4 is 4, error()
+262|                      test.note(e.exception)
+263|                      with this() as that:
+264|                          assert that(snapshot(e.exception, "unary-ops-not", encoder=str)), error()

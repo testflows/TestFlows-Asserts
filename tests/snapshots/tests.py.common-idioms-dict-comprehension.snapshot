@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert {that(x): x*f for x in range(g)} is False, error()
+
+Assertion values
+  assert {that(x): x*f for x in range(g)} is False, error()
+         ^ is {0: 0, 1: 2, 2: 4}
+  assert {that(x): x*f for x in range(g)} is False, error()
+                                          ^ is = False
+  assert {that(x): x*f for x in range(g)} is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 495 in 'run'
+
+487|                          assert {that(x) for x in range(f)} is False, error()
+488|                      test.note(e.exception)
+489|                      with this() as that:
+490|                          assert that(snapshot(e.exception, "common-idioms-set-comprehension", encoder=str)), error()
+491|  
+492|                  with subsuite.test("dict comprehension") as test:
+493|                      with raises(AssertionError) as e, this() as that:
+494|                          f, g = 2, 3
+495|>                         assert {that(x): x*f for x in range(g)} is False, error()
+496|                      test.note(e.exception)
+497|                      with this() as that:
+498|                          assert that(snapshot(e.exception, "common-idioms-dict-comprehension", encoder=str)), error()

@@ -1,0 +1,30 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert 1 and 2 and 3 and 0, error()
+
+Assertion values
+  assert 1 and 2 and 3 and 0, error()
+           ^ is = 2
+  assert 1 and 2 and 3 and 0, error()
+                 ^ is = 3
+  assert 1 and 2 and 3 and 0, error()
+                       ^ is = 0
+  assert 1 and 2 and 3 and 0, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 140 in 'run'
+
+132|                      with raises(AssertionError) as e:
+133|                          assert 1 and 0, error()
+134|                      test.note(e.exception)
+135|                      with test.test("assert exception snapshot"), this() as that:
+136|                          assert that(snapshot(e.exception, "and", encoder=str)), error()
+137|  
+138|                  with subsuite.test("multiple and") as test:
+139|                      with raises(AssertionError) as e:
+140|>                         assert 1 and 2 and 3 and 0, error()
+141|                      test.note(e.exception)
+142|                      with this() as that:
+143|                          assert that(snapshot(e.exception, "multiple-and", encoder=str)), error()

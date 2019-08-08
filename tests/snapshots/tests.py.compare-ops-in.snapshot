@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert 1 in [2], error()
+
+Assertion values
+  assert 1 in [2], error()
+              ^ is = [2]
+  assert 1 in [2], error()
+           ^ is = False
+  assert 1 in [2], error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 339 in 'run'
+
+331|                      with raises(AssertionError) as e:
+332|                          assert 1 is not 1, error()
+333|                      test.note(e.exception)
+334|                      with this() as that:
+335|                          assert that(snapshot(e.exception, "compare-ops-is-not", encoder=str)), error()
+336|                  
+337|                  with subsuite.test("in") as test:
+338|                      with raises(AssertionError) as e:
+339|>                         assert 1 in [2], error()
+340|                      test.note(e.exception)
+341|                      with this() as that:
+342|                          assert that(snapshot(e.exception, "compare-ops-in", encoder=str)), error()

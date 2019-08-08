@@ -1,0 +1,26 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert 1 == 2, error()
+
+Assertion values
+  assert 1 == 2, error()
+           ^ is = False
+  assert 1 == 2, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 283 in 'run'
+
+275|                          assert -4 is False, error()
+276|                      test.note(e.exception)
+277|                      with this() as that:
+278|                          assert that(snapshot(e.exception, "unary-ops-usub", encoder=str)), error()
+279|  
+280|              with suite.test("compare ops") as subsuite:
+281|                  with subsuite.test("eq") as test:
+282|                      with raises(AssertionError) as e:
+283|>                         assert 1 == 2, error()
+284|                      test.note(e.exception)
+285|                      with this() as that:
+286|                          assert that(snapshot(e.exception, "compare-ops-eq", encoder=str)), error()

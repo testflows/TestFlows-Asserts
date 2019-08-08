@@ -1,0 +1,28 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert ... is False, error()
+
+Assertion values
+  assert ... is False, error()
+         ^ is Ellipsis
+  assert ... is False, error()
+             ^ is = False
+  assert ... is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 416 in 'run'
+
+408|                      with raises(AssertionError) as e:
+409|                          assert (1 if 1 else 2) is False, error()
+410|                      test.note(e.exception)
+411|                      with this() as that:
+412|                          assert that(snapshot(e.exception, "common-idioms-if-else", encoder=str)), error()
+413|                  
+414|                  with subsuite.test("ellipsis") as test:
+415|                      with raises(AssertionError) as e:
+416|>                         assert ... is False, error()
+417|                      test.note(e.exception)
+418|                      with this() as that:
+419|                          assert that(snapshot(e.exception, "common-idioms-ellipsis", encoder=str)), error()

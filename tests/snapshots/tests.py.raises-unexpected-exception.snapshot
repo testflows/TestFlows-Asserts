@@ -1,0 +1,20 @@
+Oops! Assertion failed
+
+Description
+  Unexpected exception <class 'ValueError'>
+
+Where
+  File 'tests/tests.py', line 22 in 'run'
+
+14|                      with raises(AssertionError) as e:
+15|                          with raises(AssertionError):
+16|                              pass
+17|                      test.note(e.exception)
+18|                      assert snapshot(e.exception, "raises-not-raised", encoder=str)
+19|  
+20|                  with subsuite.test("unexpected exception") as test:
+21|                      with raises(AssertionError) as e:
+22|>                         with raises(AssertionError):
+23|                              raise ValueError("error")
+24|                      test.note(e.exception)
+25|                      assert snapshot(e.exception, "raises-unexpected-exception", encoder=str)

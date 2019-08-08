@@ -1,0 +1,32 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert object().__class__ is False, error()
+
+Assertion values
+  assert object().__class__ is False, error()
+         ^ is = <object object at 0x7fc3f1f451b0>
+  assert object().__class__ is False, error()
+         ^ is <object object at 0x7fc3f1f451b0>
+  assert object().__class__ is False, error()
+         ^ is = <class 'object'>
+  assert object().__class__ is False, error()
+                            ^ is = False
+  assert object().__class__ is False, error()
+  ^ is False
+
+Where
+  File 'tests/tests.py', line 439 in 'run'
+
+431|                      with raises(AssertionError) as e:
+432|                          assert [1,2,3][1:] is False, error()
+433|                      test.note(e.exception)
+434|                      with this() as that:
+435|                          assert that(snapshot(e.exception, "common-idioms-subscript", encoder=str)), error()
+436|                  
+437|                  with subsuite.test("attr access") as test:
+438|                      with raises(AssertionError) as e:
+439|>                         assert object().__class__ is False, error()
+440|                      test.note(e.exception)
+441|                      with this() as that:
+442|                          assert that(snapshot(e.exception, "common-idioms-attr-access", encoder=str)), error()
