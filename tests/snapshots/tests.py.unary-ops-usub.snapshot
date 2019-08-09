@@ -10,19 +10,3 @@ Assertion values
             ^ is = False
   assert -4 is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 275 in 'run'
-
-267|                      with raises(AssertionError) as e:
-268|                          assert +4 is False, error()
-269|                      test.note(e.exception)
-270|                      with this() as that:
-271|                          assert that(snapshot(e.exception, "unary-ops-uadd", encoder=str)), error()
-272|  
-273|                  with subsuite.test("usub") as test:
-274|                      with raises(AssertionError) as e:
-275|>                         assert -4 is False, error()
-276|                      test.note(e.exception)
-277|                      with this() as that:
-278|                          assert that(snapshot(e.exception, "unary-ops-usub", encoder=str)), error()

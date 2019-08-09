@@ -10,19 +10,3 @@ Assertion values
                ^ is = False
   assert 1 - 3 is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 169 in 'run'
-
-161|                      with raises(AssertionError) as e:
-162|                          assert 1 + 3 is False, error()
-163|                      test.note(e.exception)
-164|                      with this() as that:
-165|                          assert that(snapshot(e.exception, "binary-ops-add", encoder=str)), error()
-166|                  
-167|                  with subsuite.test("sub") as test:
-168|                      with raises(AssertionError) as e:
-169|>                         assert 1 - 3 is False, error()
-170|                      test.note(e.exception)
-171|                      with this() as that:
-172|                          assert that(snapshot(e.exception, "binary-ops-sub", encoder=str)), error()

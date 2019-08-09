@@ -10,19 +10,3 @@ Assertion values
                          ^ is = False
   assert (1 if 1 else 2) is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 409 in 'run'
-
-401|                          assert u'hello' is False, error()
-402|                      test.note(e.exception)
-403|                      with this() as that:
-404|                          assert that(snapshot(e.exception, "common-types-unicode", encoder=str)), error()
-405|  
-406|              with suite.test("common idioms") as subsuite:
-407|                  with subsuite.test("if/else") as test:
-408|                      with raises(AssertionError) as e:
-409|>                         assert (1 if 1 else 2) is False, error()
-410|                      test.note(e.exception)
-411|                      with this() as that:
-412|                          assert that(snapshot(e.exception, "common-idioms-if-else", encoder=str)), error()

@@ -5,7 +5,7 @@ TestFlows - Asserts
 Please use it only for reference.**
 
 No magic, intuitive assertion library with descriptive error messages.
-Works with Python's *assert* statement. Inspired by *pytest* 
+Works with Python's *assert* statement. Inspired by *pytest*
 support for assertions and *grappa-py/grappa* descriptive error messages.
 
 Currently supports only Python 3.6 or above.
@@ -38,25 +38,25 @@ For example
 produces the following output
 
     .. code-block::
-    
+
         Traceback (most recent call last):
           File "t.py", line 3, in <module>
             assert 1 == 2, error()
         AssertionError: Oops! Assertion failed
-        
+
         The following assertion was not satisfied
           assert 1 == 2, error()
-        
+
         Assertion values
           assert 1 == 2, error()
                    ^ is = False
           assert 1 == 2, error()
           ^ is False
-        
+
         Where
           File 't.py', line 3 in '<module>'
-        
-        0|  
+
+        0|
         1|  from testflows.asserts import error
         2|
         3|> assert 1 == 2, error()

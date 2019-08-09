@@ -10,19 +10,3 @@ Assertion values
                ^ is = False
   assert 1 | 3 is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 218 in 'run'
-
-210|                      with raises(AssertionError) as e:
-211|                          assert 1 >> 3 is False, error()
-212|                      test.note(e.exception)
-213|                      with this() as that:
-214|                          assert that(snapshot(e.exception, "binary-ops-rshift", encoder=str)), error()
-215|  
-216|                  with subsuite.test("bitOr") as test:
-217|                      with raises(AssertionError) as e:
-218|>                         assert 1 | 3 is False, error()
-219|                      test.note(e.exception)
-220|                      with this() as that:
-221|                          assert that(snapshot(e.exception, "binary-ops-bitOr", encoder=str)), error()

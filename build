@@ -22,7 +22,7 @@ parser.add_argument('--debug', help='enable debugging', action='store_true', def
 
 def build(args, options=None):
     """Build package.
-  
+
     :param args: arguments
     :param options: build options, default: ``None``
     """

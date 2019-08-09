@@ -10,19 +10,3 @@ Assertion values
              ^ is = False
   assert [1] is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 361 in 'run'
-
-353|                      with raises(AssertionError) as e:
-354|                          assert "hello" is False, error()
-355|                      test.note(e.exception)
-356|                      with this() as that:
-357|                          assert that(snapshot(e.exception, "common-types-str", encoder=str)), error()
-358|                  
-359|                  with subsuite.test("list") as test:
-360|                      with raises(AssertionError) as e:
-361|>                         assert [1] is False, error()
-362|                      test.note(e.exception)
-363|                      with this() as that:
-364|                          assert that(snapshot(e.exception, "common-types-list", encoder=str)), error()

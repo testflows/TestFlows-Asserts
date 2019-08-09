@@ -10,19 +10,3 @@ Assertion values
                 ^ is = False
   assert object is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 382 in 'run'
-
-374|                      with raises(AssertionError) as e:
-375|                          assert {'a':1} is False, error()
-376|                      test.note(e.exception)
-377|                      with this() as that:
-378|                          assert that(snapshot(e.exception, "common-types-dict", encoder=str)), error()
-379|                  
-380|                  with subsuite.test("object type") as test:
-381|                      with raises(AssertionError) as e:
-382|>                         assert object is False, error()
-383|                      test.note(e.exception)
-384|                      with this() as that:
-385|                          assert that(snapshot(e.exception, "common-types-object-type", encoder=str)), error()

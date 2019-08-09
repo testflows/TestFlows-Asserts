@@ -16,9 +16,9 @@ from setuptools import setup
 
 def version(major=4, minor=1):
   """Return module version.
-  
+
   The format is: <major>.<minor>.<major revision>.<minor revision>
-  
+
   Where major revision is based on the date YYMMDD and
   and minor revision is time HHmm.
 
@@ -27,7 +27,7 @@ def version(major=4, minor=1):
   :return: version
   """
   now = datetime.utcnow()
-  
+
   major_revision = now.strftime("%y%m%d")
   minor_revision = now.strftime("%-H%-M%-S")
 
@@ -54,7 +54,7 @@ setup(
     extras_require={
         "dev": [
             "sphinx",
-            "testflows"
+            "testflows.core"
         ]
     }
 )

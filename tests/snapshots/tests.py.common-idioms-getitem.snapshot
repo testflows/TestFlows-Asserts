@@ -10,19 +10,3 @@ Assertion values
                       ^ is = False
   assert {'a':1}['a'] is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 463 in 'run'
-
-455|                      with raises(AssertionError) as e:
-456|                          assert (lambda x: x+1)(1) is False, error()
-457|                      test.note(e.exception)
-458|                      with this() as that:
-459|                          assert that(snapshot(e.exception, "common-idioms-lambda-expr", encoder=str)), error()
-460|  
-461|                  with subsuite.test("getitem") as test:
-462|                      with raises(AssertionError) as e:
-463|>                         assert {'a':1}['a'] is False, error()
-464|                      test.note(e.exception)
-465|                      with this() as that:
-466|                          assert that(snapshot(e.exception, "common-idioms-getitem", encoder=str)), error()

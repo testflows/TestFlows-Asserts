@@ -14,15 +14,18 @@
 import ast
 import copy
 import inspect
+import pprint
+import difflib
 import textwrap
 import linecache
+import itertools
 import builtins
 
 __all__ = ["error", "this"]
 
 class this(object):
     """Obtains value so that expression
-    does not need to be reinterpreted if 
+    does not need to be reinterpreted if
     assertion fails.
     """
     __slots__ = ("stack",)
@@ -42,12 +45,12 @@ class this(object):
 
 class AssertEval(ast.NodeVisitor):
     """Asssertion expression evaluator.
-    
+
     :param frame: frame where the assertion occured
     """
     # Known types
     _simple = (
-        ast.Num, 
+        ast.Num,
         ast.Str,
         ast.NameConstant,
         ast.Attribute,
@@ -63,7 +66,7 @@ class AssertEval(ast.NodeVisitor):
         ast.Starred,
         ast.Compare,
      )
-    
+
     # operator symbols
     _op_symbols = {
         # boolean ops
@@ -99,7 +102,7 @@ class AssertEval(ast.NodeVisitor):
         ast.UAdd: "+",
         ast.USub: "-"
     }
-    
+
     # boolean operators
     _boolean_ops = {
         ast.And: lambda left, right: left and right,
@@ -129,7 +132,7 @@ class AssertEval(ast.NodeVisitor):
         ast.UAdd: lambda operand: +operand,
         ast.USub: lambda operand: -operand
     }
-    
+
     # comparison operators
     _compare_ops = {
         ast.Eq: lambda left, right: left == right,
@@ -143,25 +146,26 @@ class AssertEval(ast.NodeVisitor):
         ast.In: lambda left, right: left in right,
         ast.NotIn: lambda left, right: left not in right
     }
-    
+
     class FuncResult(object):
         """Result wrapper.
         """
         def __init__(self, result):
             self.result = result
-        
+
         def __repr__(self):
             return "= " + _saferepr(self.result)
-    
-    class CompareResult(object):
-        """Compare result wrapper.
+
+    class DiffResult(object):
+        """Compare diffable result wrapper.
         """
-        def __init__(self, result):
+        def __init__(self, result, diff):
             self.result = result
-        
+            self.diff = diff
+
         def __repr__(self):
-            return "= " + _saferepr(self.result)   
-    
+            return _saferepr(self.result) + '\n' + self.diff
+
     def __init__(self, frame):
         def error(desc=None):
             pass
@@ -170,34 +174,62 @@ class AssertEval(ast.NodeVisitor):
         self.f_locals = dict(self.frame.f_locals)
         self.f_locals['error'] = error
         self.nodes = []
+        self.expression = None
         self._is_assert = False
-        
+
     def eval(self):
         """Evaluate assert expression.
         """
         frame_info = inspect.getframeinfo(self.frame)
-        code = frame_info.code_context[0].strip()
-        
-        expression = ""
-        expression_ast = None
-        sourcelines, startline = inspect.getsourcelines(self.frame)
-        startline = max(1, startline)
-        for i in range(frame_info.lineno - startline + 1, 0, -1):
-            expression = sourcelines[i - 1] + expression
-            try:
-                self.expression = textwrap.dedent(expression).strip()
-                expression_ast = ast.parse(self.expression)
-                break
-            except SyntaxError as e:
-                pass
-        self.expression = self.expression.split("\n")
-        self.visit(expression_ast)
+        code = frame_info.code_context[0].strip() if frame_info.code_context else None
+        if code is not None:
+            expression = ""
+            expression_ast = None
+            sourcelines, startline = inspect.getsourcelines(self.frame)
+            startline = max(1, startline)
+            for i in range(frame_info.lineno - startline + 1, 0, -1):
+                expression = sourcelines[i - 1] + expression
+                try:
+                    self.expression = textwrap.dedent(expression).strip()
+                    expression_ast = ast.parse(self.expression)
+                    break
+                except SyntaxError as e:
+                    pass
+            self.expression = self.expression.split("\n")
+            self.visit(expression_ast)
         return self.expression, self.nodes
+
+    def _diff(self, op, result, left, right):
+        """Return result that includes diff
+        for a few left and right types.
+
+        :param op: operator
+        :param result: result of the comparison
+        :param left: left side comparison value
+        :param right: right side comparison value
+        """
+        if (not op is ast.Eq) or result:
+            return result
+
+        diff_types = (str, list, tuple, dict, set)
+        if (isinstance(left, diff_types)
+            and isinstance(right, diff_types)
+            and isinstance(right, type(left))):
+            if isinstance(left, str):
+                left_repr = left.splitlines()
+                right_repr = right.splitlines()
+            else:
+                left_repr = pprint.pformat(left).splitlines()
+                right_repr = pprint.pformat(right).splitlines()
+            diff = "\n".join(itertools.islice(difflib.unified_diff(left_repr, right_repr, n=0, lineterm=""),2,None))
+            return self.DiffResult(result, diff)
+
+        return result
 
     def _find_operator(self, op_type, lineno, col_offset):
         """Find an operator offset which is right before
         the specified line number and column offset.
-        
+
         :param lineno: line number
         :param col_offset: column offset
         """
@@ -229,18 +261,19 @@ class AssertEval(ast.NodeVisitor):
 
     def visit_Compare(self, node):
         result = self.visit(node.left)
-        if not isinstance(node.left, self._simple): 
+        if not isinstance(node.left, self._simple):
             self.nodes.append((result, node.left))
         for operator, comparator in zip(node.ops, node.comparators):
             op = type(operator)
             func = self._compare_ops[op]
             right = self.visit(comparator)
-            result = func(result, right)
+            left = result
+            result = func(left, right)
             if not isinstance(comparator, self._simple):
                 self.nodes.append((right, comparator))
             _operator = copy.copy(operator)
             _operator.lineno, _operator.col_offset = self._find_operator(op, comparator.lineno, comparator.col_offset)
-            self.nodes.append((self.FuncResult(result), _operator))
+            self.nodes.append((self.FuncResult(self._diff(op, result, left, right)), _operator))
         return result
 
     def visit_Attribute(self, node):
@@ -255,7 +288,7 @@ class AssertEval(ast.NodeVisitor):
             name = node.func.id
         else:
             name = self.visit(node.func)
-        
+
         if callable(name):
             func = name
         elif name in self.f_locals:
@@ -267,7 +300,7 @@ class AssertEval(ast.NodeVisitor):
         else:
             raise NameError("Function '{}' is not defined".format(name),
                             node.lineno, node.col_offset)
-        
+
         if isinstance(func, this):
             if (func.stack):
                 result = func.stack.pop(0)
@@ -282,7 +315,7 @@ class AssertEval(ast.NodeVisitor):
             if isinstance(arg, ast.AST):
                 arg_value = self.visit(arg)
             if not isinstance(arg, self._simple):
-                self.nodes.append((arg_value, arg)) 
+                self.nodes.append((arg_value, arg))
             args.append(arg_value)
 
         if args and isinstance(args[-1], ast.Starred):
@@ -298,7 +331,7 @@ class AssertEval(ast.NodeVisitor):
         value = func(*args, *starred, **keywords)
         self.nodes.append((self.FuncResult(value), node))
         return value
-   
+
     def visit_Starred(self, node):
         result = self.visit(node.value)
         return ast.Starred(result, node.ctx)
@@ -346,15 +379,15 @@ class AssertEval(ast.NodeVisitor):
         op = type(node.op)
         operator = node.op
         func = self._boolean_ops[op]
-        
+
         left = self.visit(node.values[0])
         if not isinstance(node.values[0], self._simple):
             self.nodes.append((left, node.values[0]))
-        
+
         for value in node.values[1:]:
             right = self.visit(value)
             if not isinstance(value, self._simple):
-                self.nodes.append((right, value)) 
+                self.nodes.append((right, value))
             result = func(left, right)
             _operator = copy.copy(operator)
             _operator.lineno, _operator.col_offset = self._find_operator(op, value.lineno, value.col_offset)
@@ -412,7 +445,7 @@ class AssertEval(ast.NodeVisitor):
         return result
 
     def generic_visit(self, node):
-        # some expressions like comprehensions will have their 
+        # some expressions like comprehensions will have their
         # own local scope so therefore we combine globals and locals
         # scopes into one globals scope
         f_globals = self.f_globals.copy()
@@ -428,7 +461,7 @@ class AssertEval(ast.NodeVisitor):
 def _code_block(filename, lineno, before=8, after=4):
     """Retrieve code blocks around a given line
     inside the source.
-    
+
     :param filename: name of the source file
     :param lineno: line number
     :param before: number of lines before the line number
@@ -436,10 +469,10 @@ def _code_block(filename, lineno, before=8, after=4):
     """
     min_n = max(lineno - before, 0)
     max_n = lineno + after
-    
+
     line_fmt = "%" + str(len(str(max_n))) + "d|  %s"
     lines = []
-    
+
     for n in range(min_n, max_n):
         line = linecache.getline(filename, n)
         if n > min_n and len(line) == 0:
@@ -448,21 +481,30 @@ def _code_block(filename, lineno, before=8, after=4):
         if n == lineno:
             print_line = "|> ".join(print_line.split("|  ", 1))
         lines.append(print_line)
-    
+
     return lines
 
 
 class error(object):
-    """Error object that generates a descriptive 
+    """Error object that generates a descriptive
     error message when assert fails.
-    
+
     :param desc: description, default: `None`
     :param frame: frame, default: `None`
     :param frame_info: frame info, default: `None`
     :param expression: expression, default: `None`
     :param nodes: a list of expression value nodes, default: `None`
+    :param expression_section: a flag to include an expression section
+        that lists the assert expression, default: `True`
+    :param description_section: a flag to include a description section
+        that shows custom description message, default: `True`
+    :param values_section: a flag to include a values section
+        that shows the values of the assert expression, default: `True`
+    :param where_section: a flag to include a where section
+        that shows source code where assert expression is found, default: `True`
     """
-    def __init__(self, desc=None, frame=None, frame_info=None, expression=None, nodes=None):
+    def __init__(self, desc=None, frame=None, frame_info=None, expression=None, nodes=None,
+            expression_section=True, description_section=True, values_section=True, where_section=True):
         self.frame = frame
         if self.frame is None:
             self.frame = inspect.currentframe().f_back
@@ -472,71 +514,98 @@ class error(object):
         self.desc = str(desc) if desc is not None else None
         self.nodes = list(nodes) if nodes is not None else None
         self.expression = str(expression) if expression is not None else None
+        self.expression_section = expression_section
+        self.description_section = description_section
+        self.values_section = values_section
+        self.where_section = where_section
         self.message = self.generate()
 
     def __str__(self):
         return self.message
 
     def generate(self):
-        """Re-evaluate assertion statement and 
+        """Re-evaluate assertion statement and
         generate an error message.
         """
         if self.nodes is None:
             self.expression, self.nodes = AssertEval(self.frame).eval()
         return self.generate_message()
 
-    def generate_message(self):
-        """Generate an error message.
-        
-        :param expression: expression
-        :param frame_info: frame info
+    def generate_expression_section(self):
+        """Return expression section.
         """
-        frame_info = self.frame_info
-        
-        message = "Oops! Assertion failed"
-        if self.expression:
-            message += "\n\nThe following assertion was not satisfied"
+        section = ""
+        if self.expression_section and self.expression:
+            section += "\n\nThe following assertion was not satisfied"
             for line in self.expression:
-                message += "\n  " + line
+                section += "\n  " + line
+        return section
 
-        if self.desc:
-            message += "\n\nDescription"
-            message += "\n  " + self.desc[0].capitalize() + self.desc[1:]
-        
-        if self.nodes:
-            message += "\n\nAssertion values"
+    def generate_description_section(self):
+        """Return description section.
+        """
+        section = ""
+        if self.description_section and self.desc:
+            section += "\n\nDescription"
+            section += "\n  " + self.desc[0].capitalize() + self.desc[1:]
+        return section
+
+    def generate_values_section(self):
+        """Return values section.
+        """
+        section = ""
+        if self.values_section and self.nodes:
+            section += "\n\nAssertion values"
             for v, n in self.nodes:
                 for i, line in enumerate(self.expression):
-                    message += "\n  " + line
+                    section += "\n  " + line
                     if n.lineno == i + 1:
                         col_offset = n.col_offset
                         if col_offset < 0:
                             col_offset = len(line) - len(line.lstrip())
-                        message += "\n  " + " " * col_offset + "^ is " + _saferepr(v)
-        
-        message += "\n\nWhere"
-        message += "\n  File '%s', line %d in '%s'" % (frame_info.filename, 
-            frame_info.lineno, frame_info.function)
+                        section += "\n  " + " " * col_offset + "^ is " + _saferepr(v)
+        return section
 
-        message += "\n\n" + "".join(self.code_block(frame_info.filename, frame_info.lineno))
+    def generate_where_section(self):
+        """Return where section.
+        """
+        section = ""
+        if self.where_section and self.frame_info.code_context:
+            section += "\n\nWhere"
+            section += "\n  File '%s', line %d in '%s'" % (self.frame_info.filename,
+                self.frame_info.lineno, self.frame_info.function)
 
-        return message        
+            section += "\n\n" + "".join(self.code_block(self.frame_info.filename, self.frame_info.lineno))
+        return section
+
+    def generate_message(self):
+        """Generate an error message.
+
+        :param expression: expression
+        :param frame_info: frame info
+        """
+        message = "Oops! Assertion failed"
+        message += self.generate_expression_section()
+        message += self.generate_description_section()
+        message += self.generate_values_section()
+        message += self.generate_where_section()
+        return message
 
     def code_block(self, filename, lineno, before=8, after=4):
         """Retrieve code blocks around a given line
         inside the source.
-        
+
         :param filename: name of the source file
         :param lineno: line number
         :param before: number of lines before the line number
         :param after: number of line after the line number
         """
-        min_n = max(lineno - before, 0)
+        min_n = max(lineno - before, 1)
         max_n = lineno + after
-        
+
         line_fmt = "%" + str(len(str(max_n))) + "d|  %s"
         lines = []
-        
+
         for n in range(min_n, max_n):
             line = linecache.getline(filename, n)
             if n > min_n and len(line) == 0:
@@ -545,7 +614,7 @@ class error(object):
             if n == lineno:
                 print_line = "|> ".join(print_line.split("|  ", 1))
             lines.append(print_line)
-        
+
         return lines
 
 

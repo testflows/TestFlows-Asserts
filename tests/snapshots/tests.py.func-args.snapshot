@@ -10,19 +10,3 @@ Assertion values
                     ^ is = False
   assert foo(1,2,3) is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 80 in 'run'
-
-72|  
-73|              with suite.test("func") as subsuite:
-74|                  with subsuite.test("args") as test:
-75|                      vs = []
-76|                      def foo(x,y,z):
-77|                          vs.append((x,y,z))
-78|                          return x,y,z
-79|                      with raises(AssertionError) as e:
-80|>                         assert foo(1,2,3) is False, error()
-81|                      test.note(e.exception)
-82|                      with test.test("assert that args are the same"):
-83|                          assert vs[0] == vs[1], error()

@@ -10,19 +10,3 @@ Assertion values
                ^ is = False
   assert 1 + 3 is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 162 in 'run'
-
-154|                          assert 0 or '' or False or None, error()
-155|                      test.note(e.exception)
-156|                      with this() as that:
-157|                          assert that(snapshot(e.exception, "boolean-ops-multiple-or", encoder=str)), error()
-158|  
-159|              with suite.test("binary ops") as subsuite:
-160|                  with subsuite.test("add") as test:
-161|                      with raises(AssertionError) as e:
-162|>                         assert 1 + 3 is False, error()
-163|                      test.note(e.exception)
-164|                      with this() as that:
-165|                          assert that(snapshot(e.exception, "binary-ops-add", encoder=str)), error()

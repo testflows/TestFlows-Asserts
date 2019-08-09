@@ -10,19 +10,3 @@ Assertion values
                ^ is = False
   assert 1 / 3 is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 183 in 'run'
-
-175|                      with raises(AssertionError) as e:
-176|                          assert 1 * 3 is False, error()
-177|                      test.note(e.exception)
-178|                      with this() as that:
-179|                          assert that(snapshot(e.exception, "binary-ops-mul", encoder=str)), error()
-180|  
-181|                  with subsuite.test("div") as test:
-182|                      with raises(AssertionError) as e:
-183|>                         assert 1 / 3 is False, error()
-184|                      test.note(e.exception)
-185|                      with this() as that:
-186|                          assert that(snapshot(e.exception, "binary-ops-div", encoder=str)), error()

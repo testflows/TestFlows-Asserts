@@ -8,19 +8,3 @@ Assertion values
            ^ is = False
   assert 1 <= 0, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 304 in 'run'
-
-296|                      with raises(AssertionError) as e:
-297|                          assert 1 < 1, error()
-298|                      test.note(e.exception)
-299|                      with this() as that:
-300|                          assert that(snapshot(e.exception, "compare-ops-lt", encoder=str)), error()
-301|                  
-302|                  with subsuite.test("le") as test:
-303|                      with raises(AssertionError) as e:
-304|>                         assert 1 <= 0, error()
-305|                      test.note(e.exception)
-306|                      with this() as that:
-307|                          assert that(snapshot(e.exception, "compare-ops-le", encoder=str)), error()

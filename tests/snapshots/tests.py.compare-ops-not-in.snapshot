@@ -10,19 +10,3 @@ Assertion values
            ^ is = False
   assert 1 not in [1], error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 346 in 'run'
-
-338|                      with raises(AssertionError) as e:
-339|                          assert 1 in [2], error()
-340|                      test.note(e.exception)
-341|                      with this() as that:
-342|                          assert that(snapshot(e.exception, "compare-ops-in", encoder=str)), error()
-343|                  
-344|                  with subsuite.test("not in") as test:
-345|                      with raises(AssertionError) as e:
-346|>                         assert 1 not in [1], error()
-347|                      test.note(e.exception)
-348|                      with this() as that:
-349|                          assert that(snapshot(e.exception, "compare-ops-not-in", encoder=str)), error()

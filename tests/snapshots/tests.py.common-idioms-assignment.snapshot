@@ -10,19 +10,3 @@ Assertion values
                     ^ is = False
   assert foo(x = 1) is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 425 in 'run'
-
-417|                      test.note(e.exception)
-418|                      with this() as that:
-419|                          assert that(snapshot(e.exception, "common-idioms-ellipsis", encoder=str)), error()
-420|                  
-421|                  with subsuite.test("assignment") as test:
-422|                      def foo(x):
-423|                          return x
-424|                      with raises(AssertionError) as e:
-425|>                         assert foo(x = 1) is False, error()
-426|                      test.note(e.exception)
-427|                      with this() as that:
-428|                          assert that(snapshot(e.exception, "common-idioms-assignment", encoder=str)), error()

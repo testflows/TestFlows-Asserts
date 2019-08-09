@@ -10,19 +10,3 @@ Assertion values
                ^ is = False
   assert 1 % 3 is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 190 in 'run'
-
-182|                      with raises(AssertionError) as e:
-183|                          assert 1 / 3 is False, error()
-184|                      test.note(e.exception)
-185|                      with this() as that:
-186|                          assert that(snapshot(e.exception, "binary-ops-div", encoder=str)), error()
-187|  
-188|                  with subsuite.test("mod") as test:
-189|                      with raises(AssertionError) as e:
-190|>                         assert 1 % 3 is False, error()
-191|                      test.note(e.exception)
-192|                      with this() as that:
-193|                          assert that(snapshot(e.exception, "binary-ops-mod", encoder=str)), error()

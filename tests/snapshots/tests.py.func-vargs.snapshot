@@ -1,0 +1,14 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert foo(*[1,2]) is False, error()
+
+Assertion values
+  assert foo(*[1,2]) is False, error()
+              ^ is = [1, 2]
+  assert foo(*[1,2]) is False, error()
+         ^ is = (1, 2)
+  assert foo(*[1,2]) is False, error()
+                     ^ is = False
+  assert foo(*[1,2]) is False, error()
+  ^ is False

@@ -30,19 +30,3 @@ Assertion values
                                                            ^ is = False
   assert 1 + 3 - 4 * 5 ** 1 >> 1 << 3 % 5 | 2 ^ 5 & 6 // 3 is False, error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 246 in 'run'
-
-238|                      with raises(AssertionError) as e:
-239|                          assert 1 // 3 is False, error()
-240|                      test.note(e.exception)
-241|                      with this() as that:
-242|                          assert that(snapshot(e.exception, "binary-ops-floor-div", encoder=str)), error()
-243|                  
-244|                  with subsuite.test("mixed ops") as test:
-245|                      with raises(AssertionError) as e:
-246|>                         assert 1 + 3 - 4 * 5 ** 1 >> 1 << 3 % 5 | 2 ^ 5 & 6 // 3 is False, error()
-247|                      test.note(e.exception)
-248|                      with this() as that:
-249|                          assert that(snapshot(e.exception, "binary-ops-mixed-ops", encoder=str)), error()

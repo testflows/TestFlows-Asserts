@@ -10,19 +10,3 @@ Assertion values
          ^ is = False
   assert not that(fp.read()), error()
   ^ is False
-
-Where
-  File 'tests/tests.py', line 58 in 'run'
-
-50|                          assert that(snapshot(e.exception, "multiline-explicit", encoder=str)), error()
-51|  
-52|              with suite.test("this") as subsuite:
-53|                  with subsuite.test("assert with file read") as test:
-54|                      with tempfile.TemporaryFile("w+") as fp:
-55|                          fp.write("hello")
-56|                          fp.seek(0)    
-57|                          with raises(AssertionError) as e, this() as that:
-58|>                             assert not that(fp.read()), error()
-59|                          test.note(e.exception)
-60|                          with this() as that:
-61|                              assert that(snapshot(e.exception, "this-assert_with_file_read", encoder=str)), error()

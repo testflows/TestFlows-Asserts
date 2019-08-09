@@ -14,19 +14,3 @@ Assertion values
   assert (1,
   ^ is False
           2) is False, error()
-
-Where
-  File 'tests/tests.py', line 38 in 'run'
-
-30|                      test.note(e.exception)
-31|                      assert snapshot(e.exception, "raised-ok", encoder=str)
-32|  
-33|          with self.test("assertions") as suite:
-34|              with suite.test("multiline") as subsuite:
-35|                  with subsuite.test("implicit") as test:
-36|                      with raises(AssertionError) as e:
-37|                          assert (1,
-38|>                                 2) is False, error()
-39|                      test.note(e.exception)
-40|                      with this() as that:
-41|                          assert that(snapshot(e.exception, "multiline-implicit", encoder=str)), error()
