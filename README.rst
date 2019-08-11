@@ -22,6 +22,7 @@ Why
   No extra code is executed if assertion does not fail unless assertion
   has side effects.
 * No external dependencies.
+* Simple API that only exposes **error** method and **this** context manager.
 * Compatible with most Python test frameworks.
 
 How
@@ -34,7 +35,7 @@ to produce a detailed error message.
   Therefore, if the assertion statement has a side effect it might not
   work as expected when assertion fails.
 
-In the pytest_ framework, this problem is solved
+In the pytest_ framework, this problem_ is solved
 by rewriting the original assertion.
 The **asserts** module solves this problem_ by explicitly using **this** context manager
 to store the values of the expression that has a side effect.
@@ -117,9 +118,9 @@ Assertions with side-effects
 ****************************
 
 If assertion has side effects then **this** context manager can be used to
-address this issue.
+address this problem_.
 
-The example below demonstrates the issue.
+The example below demonstrates the problem_.
 
 .. code-block:: python
 
@@ -133,7 +134,7 @@ In the code above, assertion fails and the **buf** list is modified twice. Once
 when the assertion fails and once when the assertion is reinterpreted when
 **error()** method is evaluated.
 
-The error message that is produced shows the problem
+The error message that is produced shows the problem_
 
 .. code-block:: bash
 
@@ -176,7 +177,7 @@ of the desired value of [1,2]
       assert buf.append(2) and buf, error()
              ^ is [1, 2, 2]
 
-In order to work around this problem, **this** context manager can be used
+In order to work around this problem_, **this** context manager can be used
 as follows
 
 .. code-block:: python
@@ -229,6 +230,9 @@ the lines below show that the **buf** list has the expected value of [1,2]
 
 this is because the expression passed to **that** is not reinterpreted and only the
 result of the expression is stored and used during generation of the error message.
+
+  The explicit use **this** context manager provides a simple solution without
+  any need to use magic and rewrite of the original assertion statement.
 
 .. _problem: http://pybites.blogspot.com/2011/07/behind-scenes-of-pytests-new-assertion.html
 .. _AssertionError: https://docs.python.org/3/library/exceptions.html#AssertionError
