@@ -14,32 +14,10 @@
 from datetime import datetime
 from setuptools import setup
 
-def version(major=4, minor=1):
-  """Return module version.
-
-  The format is: <major>.<minor>.<major revision>.<minor revision>
-
-  Where major revision is based on the date YYMMDD and
-  and minor revision is time HHmm.
-
-  :param major: major version
-  :param minor: minor version
-  :return: version
-  """
-  now = datetime.utcnow()
-
-  major_revision = now.strftime("%y%m%d")
-  minor_revision = now.strftime("%-H%-M%-S")
-
-  version = ".".join([str(major), str(minor), major_revision, minor_revision])
-
-  return version
-
 setup(
     name="testflows.asserts",
-    version=version(),
-    description="TestFlows - 'asserts' Assertion Library",
-    long_description=open("README.rst").read(),
+    version="__VERSION__",
+    description="TestFlows - Asserts Assertion Library",
     author="Vitaliy Zakaznikov",
     author_email="vzakaznikov@testflows.com",
     url="http://testflows.com/asserts",
@@ -53,7 +31,6 @@ setup(
     ],
     extras_require={
         "dev": [
-            "sphinx",
             "testflows.core"
         ]
     }

@@ -92,9 +92,6 @@ produces the following output
 
     .. code-block:: bash
 
-        Traceback (most recent call last):
-          File "t.py", line 3, in <module>
-            assert 1 == 2, error()
         AssertionError: Oops! Assertion failed
 
         The following assertion was not satisfied
@@ -137,11 +134,6 @@ when the assertion fails and once when the assertion is reinterpreted when
 The error message that is produced shows the problem_
 
 .. code-block:: bash
-
-    Traceback (most recent call last):
-      File "t.py", line 4, in <module>
-        assert buf.append(2) and buf, error()
-    AssertionError: Oops! Assertion failed
 
     The following assertion was not satisfied
       assert buf.append(2) and buf, error()
@@ -193,11 +185,6 @@ as follows
 and it will produce the error message
 
 .. code-block:: bash
-
-    Traceback (most recent call last):
-      File "t.py", line 5, in <module>
-        assert that(buf.append(2)) and buf, error()
-    AssertionError: Oops! Assertion failed
 
     The following assertion was not satisfied
       assert that(buf.append(2)) and buf, error()

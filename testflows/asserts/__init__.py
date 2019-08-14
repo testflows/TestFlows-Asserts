@@ -17,6 +17,6 @@ from .helpers import *
 
 __author__ = "Vitaliy Zakaznikov (TestFlows Test Framework http://testflows.com)"
 __license__ = "Apache License, Version 2.0"
-__version__ = "5.2"
+__version__ = "5.2.__VERSION__"
 
 __all__ = __all__
