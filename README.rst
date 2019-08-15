@@ -19,8 +19,7 @@ Why
   Assertion statements are not modified and the default AssertionError_
   class is not overridden.
 * High performance.
-  No extra code is executed if assertion does not fail unless assertion
-  has side effects.
+  No extra code is executed if the assertion does not fail unless the assertion has side effects.
 * No external dependencies.
 * Simple API that only exposes **error** method and **this** context manager.
 * Compatible with most Python test frameworks.
@@ -33,7 +32,7 @@ pytest_ assertions. If the assertion fails, the `assert statement`_ is reinterpr
 to produce a detailed error message.
 
   Therefore, if the assertion statement has a side effect it might not
-  work as expected when assertion fails.
+  work as expected when an assertion fails.
 
 In the pytest_ framework, this problem_ is solved
 by rewriting the original assertion.
@@ -67,7 +66,7 @@ and
 
     $ ./install
 
-uses *sudo pip install* command to perfom system wide installation.
+uses *sudo pip install* command to perform the system-wide installation.
 
 
 Usage
@@ -127,7 +126,7 @@ The example below demonstrates the problem_.
     assert buf.append(2) and buf, error()
 
 
-In the code above, assertion fails and the **buf** list is modified twice. Once
+In the code above, the assertion fails and the **buf** list is modified twice. Once
 when the assertion fails and once when the assertion is reinterpreted when
 **error()** method is evaluated.
 
@@ -216,10 +215,10 @@ the lines below show that the **buf** list has the expected value of [1,2]
                                      ^ is [1, 2]
 
 this is because the expression passed to **that** is not reinterpreted and only the
-result of the expression is stored and used during generation of the error message.
+result of the expression is stored and used during the generation of the error message.
 
-  The explicit use **this** context manager provides a simple solution without
-  any need to use magic and rewrite of the original assertion statement.
+  The explicit use of **this** context manager provides a simple solution without
+  any need to rewrite the original assertion statement.
 
 .. _problem: http://pybites.blogspot.com/2011/07/behind-scenes-of-pytests-new-assertion.html
 .. _AssertionError: https://docs.python.org/3/library/exceptions.html#AssertionError
