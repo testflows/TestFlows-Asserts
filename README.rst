@@ -29,51 +29,6 @@ Why
 * Simple and clean API.
 * Compatible with most Python test frameworks.
 
-How
-***
-
-The **asserts** module works similarly to the old implementation of
-pytest_ assertions. If the assertion fails, the `assert statement`_ is reinterpreted
-to produce a detailed error message.
-
-  Therefore, if the assertion statement has a side effect it might not
-  work as expected when an assertion fails.
-
-In the pytest_ framework, this problem_ is solved
-by rewriting the original assertion.
-The **asserts** module solves this problem_ by explicitly using **this** context manager
-to store the values of the expression that has a side effect.
-
-Installation
-************
-
-.. code-block:: bash
-
-    $ ./build; ./install
-
-
-where
-
-.. code-block:: bash
-
-    $ ./build
-
-creates a pip installable package in *./dist*, for example
-
-.. code-block:: bash
-
-    $ ls dist/
-    testflows.asserts-4.1.190811.155018.tar.gz
-
-and
-
-.. code-block:: bash
-
-    $ ./install
-
-uses *sudo pip install* command to perform the system-wide installation.
-
-
 Usage
 *****
 
@@ -139,6 +94,50 @@ produces the following output
         1|  from testflows.asserts import error
         2|
         3|> assert 1 == 2, error()
+
+How
+***
+
+The **asserts** module works similarly to the old implementation of
+pytest_ assertions. If the assertion fails, the `assert statement`_ is reinterpreted
+to produce a detailed error message.
+
+  Therefore, if the assertion statement has a side effect it might not
+  work as expected when an assertion fails.
+
+In the pytest_ framework, this problem_ is solved
+by rewriting the original assertion.
+The **asserts** module solves this problem_ by explicitly using **this** context manager
+to store the values of the expression that has a side effect.
+
+Installation
+************
+
+.. code-block:: bash
+
+    $ ./build; ./install
+
+
+where
+
+.. code-block:: bash
+
+    $ ./build
+
+creates a pip installable package in *./dist*, for example
+
+.. code-block:: bash
+
+    $ ls dist/
+    testflows.asserts-4.1.190811.155018.tar.gz
+
+and
+
+.. code-block:: bash
+
+    $ ./install
+
+uses *sudo pip install* command to perform the system-wide installation.
 
 Assertions with side-effects
 ****************************
