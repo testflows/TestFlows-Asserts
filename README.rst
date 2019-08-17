@@ -1,3 +1,8 @@
+.. image:: https://raw.githubusercontent.com/testflows/TestFlows-ArtWork/master/images/testbug-laptop.png
+   :width: 100%
+   :alt: test bug
+   :align: center
+
 TestFlows - Asserts
 ===================
 
@@ -21,7 +26,7 @@ Why
 * High performance.
   No extra code is executed if the assertion does not fail unless the assertion has side effects.
 * No external dependencies.
-* Simple API that only exposes **error** method and **this** context manager.
+* Simple and clean API.
 * Compatible with most Python test frameworks.
 
 How
@@ -72,11 +77,23 @@ uses *sudo pip install* command to perform the system-wide installation.
 Usage
 *****
 
+Use **error** for a single assert statement
+
 .. code-block:: python
 
     from testflows.asserts import error
 
     assert 1 == 1, error()
+
+or use **errors** context manager to wrap multiple assert statements
+
+.. code-block:: python
+
+    from testflows.asserts import errors
+
+    with errors():
+        assert 1 == 1
+        assert 2 == 2
 
 When an assertion fails a descriptive error message is produced.
 For example
