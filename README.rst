@@ -1,10 +1,10 @@
+TestFlows - Asserts
+===================
+
 .. image:: https://raw.githubusercontent.com/testflows/TestFlows-ArtWork/master/images/testbug-laptop.png
    :width: 100%
    :alt: test bug
    :align: center
-
-TestFlows - Asserts
-===================
 
 **The asserts module is still work in progress and is currently under development.
 Please use it only for reference.**
