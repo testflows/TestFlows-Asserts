@@ -21,7 +21,7 @@ import linecache
 import itertools
 import builtins
 
-__all__ = ["error", "this"]
+__all__ = ["error", "errors", "this"]
 
 class this(object):
     """Obtains value so that expression
@@ -166,10 +166,11 @@ class AssertEval(ast.NodeVisitor):
         def __repr__(self):
             return _saferepr(self.result) + '\n' + self.diff
 
-    def __init__(self, frame):
+    def __init__(self, frame, frame_info):
         def error(desc=None):
             pass
         self.frame = frame
+        self.frame_info = frame_info
         self.f_globals = self.frame.f_globals
         self.f_locals = dict(self.frame.f_locals)
         self.f_locals['error'] = error
@@ -180,22 +181,26 @@ class AssertEval(ast.NodeVisitor):
     def eval(self):
         """Evaluate assert expression.
         """
-        frame_info = inspect.getframeinfo(self.frame)
-        code = frame_info.code_context[0].strip() if frame_info.code_context else None
-        if code is not None:
-            expression = ""
-            expression_ast = None
-            sourcelines, startline = inspect.getsourcelines(self.frame)
-            startline = max(1, startline)
-            for i in range(frame_info.lineno - startline + 1, 0, -1):
-                expression = sourcelines[i - 1] + expression
-                try:
-                    self.expression = textwrap.dedent(expression).strip()
-                    expression_ast = ast.parse(self.expression)
-                    break
-                except SyntaxError as e:
-                    pass
-            self.expression = self.expression.split("\n")
+        expression_ast = None
+        if self.expression:
+            expression_ast = ast.parse(self.expression)
+        else:
+            code = self.frame_info.code_context[0].strip() if self.frame_info.code_context else None
+            if code is not None:
+                expression = ""
+                expression_ast = None
+                sourcelines, startline = inspect.getsourcelines(self.frame)
+                startline = max(1, startline)
+                for i in range(self.frame_info.lineno - startline + 1, 0, -1):
+                    expression = sourcelines[i - 1] + expression
+                    try:
+                        self.expression = textwrap.dedent(expression).strip()
+                        expression_ast = ast.parse(self.expression)
+                        break
+                    except SyntaxError as e:
+                        pass
+                self.expression = self.expression.split("\n")
+        if expression_ast:
             self.visit(expression_ast)
         return self.expression, self.nodes
 
@@ -528,7 +533,7 @@ class error(object):
         generate an error message.
         """
         if self.nodes is None:
-            self.expression, self.nodes = AssertEval(self.frame).eval()
+            self.expression, self.nodes = AssertEval(self.frame, self.frame_info).eval()
         return self.generate_message()
 
     def generate_expression_section(self):
@@ -617,6 +622,81 @@ class error(object):
 
         return lines
 
+
+class errors(object):
+    """Context manager that can be used
+    to wrap multiple assert statements.
+    """
+    class softerror(object):
+        """Context manager that is used
+        to wrap soft assertion.
+
+        :param errors: list to which an exception will be added
+        """
+        def __init__(self, errors):
+            self.errors = errors
+
+        def __enter__(self):
+            pass
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            if isinstance(exc_val, AssertionError):
+                frame = inspect.currentframe().f_back
+                frame_info = inspect.getinnerframes(exc_tb)[-1]
+                desc = None
+                if exc_val.args:
+                    if isinstance(exc_val.args[0], error):
+                        return
+                    desc = str(exc_val)
+                exc_val.args = (error(desc=desc, frame=frame, frame_info=frame_info),)
+                self.errors.append(exc_val)
+                return True
+
+    def __init__(self, expression_section=True, description_section=True,
+            values_section=True, where_section=True):
+        self.errors = []
+        self.expression_section = expression_section
+        self.description_section = description_section
+        self.values_section = values_section
+        self.where_section = where_section
+
+    def __str__(self):
+        errs = []
+        for err in self.errors:
+            err = err.args[0]
+            err.expression_section = self.expression_section
+            err.description_section = self.description_section
+            err.values_section = self.values_section
+            err.where_section = self.where_section
+            errs.append(err.generate_message())
+        return "\n\nas well as the following assertion\n\n".join(errs)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if isinstance(exc_val, AssertionError):
+            frame = inspect.currentframe().f_back
+            frame_info = inspect.getinnerframes(exc_tb)[-1]
+            desc = None
+            if exc_val.args:
+                if isinstance(exc_val.args[0], error):
+                    return
+                desc = str(exc_val)
+            exc_val.args = (error(desc=desc, frame=frame, frame_info=frame_info),)
+            if self.errors:
+                self.errors.append(exc_val)
+        elif isinstance(exc_val, Exception):
+            return
+
+        if self.errors:
+            raise AssertionError(self) from None
+
+    def error(self):
+        """Return an instance of the soft
+        error context manager.
+        """
+        return self.softerror(self.errors)
 
 def _saferepr(value):
     try:

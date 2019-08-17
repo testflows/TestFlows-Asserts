@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from datetime import datetime
 from setuptools import setup
 
 setup(
@@ -20,14 +19,13 @@ setup(
     description="TestFlows - Asserts Assertion Library",
     author="Vitaliy Zakaznikov",
     author_email="vzakaznikov@testflows.com",
-    url="http://testflows.com/asserts",
+    url="http://testflows.com",
     license="Apache-2.0",
     packages=[
         "testflows.asserts",
     ],
     zip_safe=False,
     install_requires=[
-      "setuptools",
     ],
     extras_require={
         "dev": [

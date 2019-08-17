@@ -17,22 +17,83 @@ import tempfile
 
 from testflows.core import main
 from testflows.core import Test as TestBase
-from testflows.asserts import error, this, raises, snapshot
+from testflows.asserts import error, errors, this, raises, snapshot
 
 def snap(value):
     """Take a snapshot of the value. If the value is an
     AssertionError with an error object then do not
     include the "where section".
     """
-    if isinstance(value, AssertionError) and value.args and isinstance(value.args[0], error):
-        err = value.args[0]
-        err.where_section = False
-        return err.generate_message()
+    if isinstance(value, AssertionError) and value.args:
+        if isinstance(value.args[0], error):
+            err = value.args[0]
+            err.where_section = False
+            return err.generate_message()
+        if isinstance(value.args[0], errors):
+            err = value.args[0]
+            err.where_section = False
+            return str(err)
     return repr(value)
-
 
 class Test(TestBase):
     def run(self):
+        with self.test("errors") as suite:
+            with suite.test("errors no fails") as test:
+                with errors():
+                    assert True
+                    assert 1 == 1
+
+            with suite.test("errors") as test:
+                with raises(AssertionError) as e:
+                    with errors():
+                        assert True
+                        assert False, "boo" 
+                test.note(e.exception)
+                with this() as that:
+                    assert that(snapshot(e.exception, "errors-errors", encoder=snap)), error()
+
+            with suite.test("soft error no fails") as test:
+                with errors() as soft:
+                    with soft.error():
+                        assert True
+                    with soft.error():
+                        assert 1 == 1
+
+            with suite.test("soft errors") as test:
+                with raises(AssertionError) as e:
+                    with errors() as soft:
+                        with soft.error():
+                            assert False, "boo"
+                        with soft.error():
+                            assert False, "boo2"
+                        assert True
+                test.note(e.exception)
+                with this() as that:
+                    assert that(snapshot(e.exception, "errors-soft-errors", encoder=snap)), error()
+
+            with suite.test("mixed errors no fails") as test:
+                with errors() as soft:
+                    assert True
+                    with soft.error():
+                        assert True
+                    assert "a" == "a"
+                    with soft.error():
+                        assert True
+
+            with suite.test("mixed errors") as test:
+                with raises(AssertionError) as e:
+                    with errors() as soft:
+                        with soft.error():
+                            assert False, "boo"
+                        assert True
+                        assert False, "boo2"
+                        # should not get here as the assertion above
+                        # should cause an exception
+                        assert 1/0
+                test.note(e.exception)
+                with this() as that:
+                    assert that(snapshot(e.exception, "errors-mixed-errors", encoder=snap)), error()
+
         with self.test("helpers") as suite:
             with suite.test("raises") as subsuite:
                 with subsuite.test("not raised") as test:

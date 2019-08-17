@@ -25,8 +25,8 @@ package = os.path.join("testflows", "asserts")
 init_path = os.path.join(current_dir, package, "__init__.py")
 setup_path = os.path.join(current_dir, "setup.py")
 
-parser = argparse.ArgumentParser(description='TestFlows (core) - build script')
-parser.add_argument('--debug', help='enable debugging', action='store_true', default=False)
+parser = argparse.ArgumentParser(description="TestFlows - Asserts build script")
+parser.add_argument("--debug", help="enable debugging", action="store_true", default=False)
 
 def get_base_version():
     """Return package base version.
@@ -37,7 +37,7 @@ def get_base_version():
             if line.startswith("__version__ = "):
                 match = re.match("__version__\s=\s\"(?P<version>.+).__VERSION__", line)
                 if match:
-                    version = match.groupdict().get('version')
+                    version = match.groupdict().get("version")
                     if version:
                         break
     if not version:
@@ -83,9 +83,9 @@ def build_package(args, options):
     :param args: arguments
     :param options: extra options
     """
-    subprocess.run(['/usr/bin/env', 'python3', 'setup.py']
-                   + (['-q'] if not args.debug else [])
-                   + ['sdist']
+    subprocess.run(["/usr/bin/env", "python3", "setup.py"]
+                   + (["-q"] if not args.debug else [])
+                   + ["sdist"]
                    + (options if options else []))
 
 def build(args, options=None):
@@ -97,8 +97,8 @@ def build(args, options=None):
     if options is None:
         options = []
 
-    if os.path.exists('dist'):
-        shutil.rmtree('dist')
+    if os.path.exists("dist"):
+        shutil.rmtree("dist")
 
     base_version = get_base_version()
     revision = get_revision()
@@ -115,6 +115,6 @@ def build(args, options=None):
         if setup_content:
             unset_version(setup_path, setup_content)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = parser.parse_args()
     build(args)

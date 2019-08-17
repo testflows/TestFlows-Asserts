@@ -1,0 +1,25 @@
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert False, "boo"
+
+Description
+  Boo
+
+Assertion values
+  assert False, "boo"
+  ^ is False
+
+as well as the following assertion
+
+Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert False, "boo2"
+
+Description
+  Boo2
+
+Assertion values
+  assert False, "boo2"
+  ^ is False

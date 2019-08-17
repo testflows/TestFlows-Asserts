@@ -95,6 +95,19 @@ or use **errors** context manager to wrap multiple assert statements
         assert 1 == 1
         assert 2 == 2
 
+and if you don't want to abort when an assertion fails and would like to
+keep going then the **errors** context manager supports soft assertions through it's
+**error** method.
+
+.. code-block:: python
+
+    from testflows.asserts import errors
+
+    with errors() as soft:
+        with soft.error():
+            assert 1 == 2
+        assert 2 == 2
+
 When an assertion fails a descriptive error message is produced.
 For example
 
