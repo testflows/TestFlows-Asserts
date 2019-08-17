@@ -1,7 +1,7 @@
 TestFlows - Asserts
 ===================
 
-.. image:: https://raw.githubusercontent.com/testflows/TestFlows-ArtWork/master/images/testbug-laptop.png
+.. image:: https://raw.githubusercontent.com/testflows/TestFlows-ArtWork/master/images/testbug-laptop-testflows.png
    :width: 100%
    :alt: test bug
    :align: center
