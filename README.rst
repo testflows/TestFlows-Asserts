@@ -107,7 +107,7 @@ to produce a detailed error message.
 
 In the pytest_ framework, this problem_ is solved
 by rewriting the original assertion.
-The **asserts** module solves this problem_ by explicitly using **this** context manager
+The **asserts** module solves this problem_ by explicitly using **values** context manager
 to store the values of the expression that has a side effect.
 
 Installation
@@ -142,7 +142,7 @@ uses *sudo pip install* command to perform the system-wide installation.
 Assertions with side-effects
 ****************************
 
-If assertion has side effects then **this** context manager can be used to
+If assertion has side effects then **values** context manager can be used to
 address this problem_.
 
 The example below demonstrates the problem_.
@@ -197,15 +197,15 @@ of the desired value of [1,2]
       assert buf.append(2) and buf, error()
              ^ is [1, 2, 2]
 
-In order to work around this problem_, **this** context manager can be used
+In order to work around this problem_, **values** context manager can be used
 as follows
 
 .. code-block:: python
 
-    from testflows.asserts import this, error
+    from testflows.asserts import values, error
 
     buf = [1]
-    with this() as that:
+    with values() as that:
         assert that(buf.append(2)) and buf, error()
 
 
@@ -230,10 +230,10 @@ and it will produce the error message
     Where
       File 't.py', line 5 in '<module>'
 
-    1|  from testflows.asserts import this, error
+    1|  from testflows.asserts import values, error
     2|
     3|  buf = [1]
-    4|  with this() as that:
+    4|  with values() as that:
     5|>     assert that(buf.append(2)) and buf, error()
 
 the lines below show that the **buf** list has the expected value of [1,2]
@@ -246,7 +246,7 @@ the lines below show that the **buf** list has the expected value of [1,2]
 this is because the expression passed to **that** is not reinterpreted and only the
 result of the expression is stored and used during the generation of the error message.
 
-  The explicit use of **this** context manager provides a simple solution without
+  The explicit use of **values** context manager provides a simple solution without
   any need to rewrite the original assertion statement.
 
 .. _problem: http://pybites.blogspot.com/2011/07/behind-scenes-of-pytests-new-assertion.html

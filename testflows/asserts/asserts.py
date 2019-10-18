@@ -21,9 +21,9 @@ import linecache
 import itertools
 import builtins
 
-__all__ = ["error", "errors", "this"]
+__all__ = ["error", "errors", "values"]
 
-class this(object):
+class values(object):
     """Obtains value so that expression
     does not need to be reinterpreted if
     assertion fails.
@@ -306,7 +306,7 @@ class AssertEval(ast.NodeVisitor):
             raise NameError("Function '{}' is not defined".format(name),
                             node.lineno, node.col_offset)
 
-        if isinstance(func, this):
+        if isinstance(func, values):
             if (func.stack):
                 result = func.stack.pop(0)
             else:
