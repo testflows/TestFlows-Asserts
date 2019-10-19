@@ -13,12 +13,17 @@
 # limitations under the License.
 from setuptools import setup
 
+with open("README.rst", "r") as fd:
+    long_description = fd.read()
+
 setup(
     name="testflows.asserts",
     version="__VERSION__",
     description="TestFlows - Asserts Assertion Library",
     author="Vitaliy Zakaznikov",
     author_email="vzakaznikov@testflows.com",
+    long_description=long_description,
+    long_description_content_type="text/x-rst",
     url="https://github.com/testflows/testflows-asserts",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
