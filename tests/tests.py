@@ -16,8 +16,8 @@ import sys
 import re
 import tempfile
 
-from testflows.core import main, run, note
-from testflows.core import TestModule, Test, Suite
+from testflows.core import main, note
+from testflows.core import TestModule, Module, Test, Suite
 from testflows.asserts import error, errors, values, raises, snapshot
 
 def snap(value):
@@ -37,7 +37,7 @@ def snap(value):
     return repr(value)
 
 @TestModule
-def regression():
+def regression(self):
     """TestFlows - Asserts regression suite.
     """
     with Suite("errors"):
@@ -625,4 +625,4 @@ def regression():
                     assert that(snapshot(e.exception, "common-idioms-dict-comprehension", encoder=snap)), error()
 
 if main():
-    run(regression)
+    Module(run=regression)
