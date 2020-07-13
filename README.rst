@@ -1,4 +1,4 @@
-`TestFlows.com Open-Source Software Testing Framework`_ - Asserts
+`TestFlows.com Open-Source Software Testing Framework`_ Asserts
 =================================================================
 
 .. image:: https://raw.githubusercontent.com/testflows/TestFlows-ArtWork/master/images/testbug-laptop-testflows.png
