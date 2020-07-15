@@ -1,2 +1,2 @@
-snapshot = r"""'""" + '"""' + """hello""" + '"""' + """there""" + '"""' + """""foo""boo'"""
+snapshot = r"""'""" + '"""' + r"""hello""" + '"""' + r"""there""" + '"""' + r"""""foo""boo'"""
 
