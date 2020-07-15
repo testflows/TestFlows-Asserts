@@ -1,4 +1,5 @@
-Oops! Assertion failed
+snapshot = r"""Oops! Assertion failed
 
 Description
-  Exception (<class 'AssertionError'>,) was not raised
+  Exception (<class 'AssertionError'>,) was not raised"""
+

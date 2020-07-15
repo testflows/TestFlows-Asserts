@@ -1,4 +1,4 @@
-Oops! Assertion failed
+snapshot = r"""Oops! Assertion failed
 
 The following assertion was not satisfied
   assert {that(x): x*f for x in range(g)} is False, error()
@@ -9,4 +9,5 @@ Assertion values
   assert {that(x): x*f for x in range(g)} is False, error()
                                           ^ is = False
   assert {that(x): x*f for x in range(g)} is False, error()
-  ^ is False
+  ^ is False"""
+

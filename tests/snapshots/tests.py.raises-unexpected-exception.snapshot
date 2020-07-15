@@ -1,4 +1,5 @@
-Oops! Assertion failed
+snapshot = r"""Oops! Assertion failed
 
 Description
-  Unexpected exception <class 'ValueError'>
+  Unexpected exception <class 'ValueError'>"""
+

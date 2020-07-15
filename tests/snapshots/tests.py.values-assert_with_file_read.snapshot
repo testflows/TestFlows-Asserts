@@ -1,4 +1,4 @@
-Oops! Assertion failed
+snapshot = r"""Oops! Assertion failed
 
 The following assertion was not satisfied
   assert not that(fp.read()), error()
@@ -9,4 +9,5 @@ Assertion values
   assert not that(fp.read()), error()
          ^ is = False
   assert not that(fp.read()), error()
-  ^ is False
+  ^ is False"""
+

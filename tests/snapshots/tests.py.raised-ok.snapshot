@@ -1,1 +1,2 @@
-ValueError('error',)
+snapshot = r"""ValueError('error',)"""
+

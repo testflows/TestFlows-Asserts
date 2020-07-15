@@ -98,6 +98,16 @@ def regression(self):
                 assert that(snapshot(e.exception, "errors-mixed-errors", encoder=snap)), error()
 
     with Suite("helpers"):
+        with Test("snapshot"):
+            with Test("triple quotes"):
+                with values() as that:
+                    assert that(snapshot('"""hello"""there"""""foo""boo', "snapshot-triple-quotes", encoder=snap)), error()
+
+            with Test("multiple snapshots in the same file"):
+                with values() as that:
+                    assert that(snapshot("first", "snapshot-multiple-snapshots-in-the-same-file", name="first", encoder=snap)), error()
+                    assert that(snapshot("second", "snapshot-multiple-snapshots-in-the-same-file", name="second", encoder=snap)), error()
+
         with Test("raises"):
             with Test("not raised"):
                 with raises(AssertionError) as e:

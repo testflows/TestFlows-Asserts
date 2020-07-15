@@ -1,4 +1,4 @@
-Oops! Assertion failed
+snapshot = r"""Oops! Assertion failed
 
 The following assertion was not satisfied
   assert "hello" == "foo bar"\
@@ -60,4 +60,5 @@ Assertion values
   assert "hello" == "foo bar"\
   ^ is False
       and 3 == 3\
-      and 1 > 1 or 1>1 or 3>3 or 4>+4, error()
+      and 1 > 1 or 1>1 or 3>3 or 4>+4, error()"""
+

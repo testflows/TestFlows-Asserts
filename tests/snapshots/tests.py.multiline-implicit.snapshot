@@ -1,4 +1,4 @@
-Oops! Assertion failed
+snapshot = r"""Oops! Assertion failed
 
 The following assertion was not satisfied
   assert (1,
@@ -13,4 +13,5 @@ Assertion values
              ^ is = False
   assert (1,
   ^ is False
-          2) is False, error()
+          2) is False, error()"""
+

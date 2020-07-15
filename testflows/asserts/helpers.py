@@ -17,6 +17,8 @@ import inspect
 import textwrap
 import difflib
 
+from importlib.machinery import SourceFileLoader
+
 from testflows.asserts import error
 __all__ = ["raises", "snapshot"]
 
@@ -44,7 +46,7 @@ class raises(object):
                 frame=self.frame, frame_info=self.frame_info, nodes=[]))
         return True
 
-def snapshot(value, id, output=None, path=None, encoder=repr):
+def snapshot(value, id, output=None, path=None, name="snapshot", encoder=repr):
     """Compare value representation to a stored snapshot.
     If snapshot does not exist, assertion passes else
     representation of the value is compared to the stored snapshot.
@@ -56,6 +58,7 @@ def snapshot(value, id, output=None, path=None, encoder=repr):
     :param value: value
     :param output: function to output the representation of the value
     :param path: custom snapshot path, default: `./snapshots`
+    :param name: name of the snapshot value inside the snapshots file, default: `snapshot`
     :paran encoder: custom snapshot encoder, default: `repr`
     """
     class SnapshotError(object):
@@ -105,14 +108,16 @@ def snapshot(value, id, output=None, path=None, encoder=repr):
         os.makedirs(path)
 
     if os.path.exists(filename):
-        with open(filename, "r") as fd:
-            snapshot_value = fd.read()
+        snapshot_module = SourceFileLoader("snapshot", filename).load_module()
+        if hasattr(snapshot_module, name):
+            snapshot_value = getattr(snapshot_module, name)
             if not (snapshot_value == repr_value):
                 return SnapshotError(filename, snapshot_value, repr_value)
             return True
-    else:
-        # no snapshot, so just store the representation
-        with open(filename, "w") as fd:
-            fd.write(repr_value)
+
+    # no snapshot, so just store the representation
+    with open(filename, "a") as fd:
+        repr_value = repr_value.replace('"""', '""" + \'"""\' + """')
+        fd.write(f'''{name} = r"""{repr_value}"""\n\n''')
 
     return True

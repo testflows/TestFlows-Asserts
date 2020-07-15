@@ -1,4 +1,4 @@
-Oops! Assertion failed
+snapshot = r"""Oops! Assertion failed
 
 The following assertion was not satisfied
   assert {1:"a", 2:"a", 3:"c"} == {1:"a", 2:"b", 3:"c"}, error()
@@ -14,4 +14,5 @@ Assertion values
     -{1: 'a', 2: 'a', 3: 'c'}
     +{1: 'a', 2: 'b', 3: 'c'}
   assert {1:"a", 2:"a", 3:"c"} == {1:"a", 2:"b", 3:"c"}, error()
-  ^ is False
+  ^ is False"""
+
