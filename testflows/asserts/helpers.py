@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import re
 import os
 import inspect
 import textwrap
@@ -21,6 +22,18 @@ from importlib.machinery import SourceFileLoader
 
 from testflows.asserts import error
 __all__ = ["raises", "snapshot"]
+
+def varname(s):
+    """Make valid Python variable name.
+    """
+    invalid_chars = re.compile("[^0-9a-zA-Z_]")
+    invalid_start_chars = re.compile("^[^a-zA-Z_]+")
+
+    name = invalid_chars.sub('_', str(s))
+    name = invalid_start_chars.sub('', name)
+    if not name:
+        raise ValueError(f"can't convert to valid name '{s}'")
+    return name
 
 class raises(object):
     """Context manager that consumes expected exceptions
@@ -61,6 +74,8 @@ def snapshot(value, id, output=None, path=None, name="snapshot", encoder=repr):
     :param name: name of the snapshot value inside the snapshots file, default: `snapshot`
     :paran encoder: custom snapshot encoder, default: `repr`
     """
+    name = varname(name) if name != "snapshot" else name
+
     class SnapshotError(object):
         def __init__(self, filename, snapshot_value, actual_value, diff=None):
             self.snapshot_value = snapshot_value
@@ -117,7 +132,7 @@ def snapshot(value, id, output=None, path=None, name="snapshot", encoder=repr):
 
     # no snapshot, so just store the representation
     with open(filename, "a") as fd:
-        repr_value = repr_value.replace('"""', '""" + \'"""\' + """')
+        repr_value = repr_value.replace('"""', '""" + \'"""\' + r"""')
         fd.write(f'''{name} = r"""{repr_value}"""\n\n''')
 
     return True
