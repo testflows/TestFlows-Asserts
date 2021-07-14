@@ -77,11 +77,12 @@ def snapshot(value, id, output=None, path=None, name="snapshot", encoder=repr):
     name = varname(name) if name != "snapshot" else name
 
     class SnapshotError(object):
-        def __init__(self, filename, snapshot_value, actual_value, diff=None):
+        def __init__(self, filename, name, snapshot_value, actual_value, diff=None):
             self.snapshot_value = snapshot_value
             self.actual_value = actual_value
             self.diff = diff
             self.filename = str(filename)
+            self.name = str(name)
 
         def __bool__(self):
             return False
@@ -89,6 +90,7 @@ def snapshot(value, id, output=None, path=None, name="snapshot", encoder=repr):
         def __repr__(self):
             r = "SnapshotError("
             r += "\nfilename=" + self.filename
+            r += "\nname=" + self.name
             r += "\nsnapshot_value=\"\"\"\n"
             r += textwrap.indent(self.snapshot_value, " " * 4)
             r += "\"\"\",\nactual_value=\"\"\"\n"
@@ -127,7 +129,7 @@ def snapshot(value, id, output=None, path=None, name="snapshot", encoder=repr):
         if hasattr(snapshot_module, name):
             snapshot_value = getattr(snapshot_module, name)
             if not (snapshot_value == repr_value):
-                return SnapshotError(filename, snapshot_value, repr_value)
+                return SnapshotError(filename, name, snapshot_value, repr_value)
             return True
 
     # no snapshot, so just store the representation
