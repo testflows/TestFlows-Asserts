@@ -5,9 +5,9 @@ The following assertion was not satisfied
 
 Assertion values
   assert (1,2,3) == (1,1,3), error()
-          ^ is = (1, 2, 3)
+         ^ is = (1, 2, 3)
   assert (1,2,3) == (1,1,3), error()
-                     ^ is = (1, 1, 3)
+                    ^ is = (1, 1, 3)
   assert (1,2,3) == (1,1,3), error()
                  ^ is = False
     @@ -1 +1 @@

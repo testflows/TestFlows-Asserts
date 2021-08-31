@@ -6,7 +6,7 @@ The following assertion was not satisfied
 
 Assertion values
   assert (1,
-          ^ is = (1, 2)
+         ^ is = (1, 2)
           2) is False, error()
   assert (1,
           2) is False, error()

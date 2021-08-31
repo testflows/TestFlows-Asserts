@@ -1,2 +1,2 @@
-snapshot = r"""ValueError('error',)"""
+snapshot = r"""ValueError('error')"""
 

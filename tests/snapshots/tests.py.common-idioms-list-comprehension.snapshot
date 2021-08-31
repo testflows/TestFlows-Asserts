@@ -5,7 +5,7 @@ The following assertion was not satisfied
 
 Assertion values
   assert foo([y*x for x in [[1],[2]] if len(x) > 0 for y in x if y > 0]) is False, error()
-              ^ is [[1], [2, 2]]
+             ^ is [[1], [2, 2]]
   assert foo([y*x for x in [[1],[2]] if len(x) > 0 for y in x if y > 0]) is False, error()
          ^ is = [[1], [2, 2]]
   assert foo([y*x for x in [[1],[2]] if len(x) > 0 for y in x if y > 0]) is False, error()

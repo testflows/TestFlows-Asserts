@@ -59,16 +59,17 @@ class raises(object):
                 frame=self.frame, frame_info=self.frame_info, nodes=[]))
         return True
 
-def snapshot(value, id, output=None, path=None, name="snapshot", encoder=repr):
+def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=repr):
     """Compare value representation to a stored snapshot.
     If snapshot does not exist, assertion passes else
     representation of the value is compared to the stored snapshot.
 
     Snapshot files have format:
 
-        <test file name>.<id>.snapshot
+        <test file name>[.<id>].snapshot
 
-    :param value: value
+    :param value: value to be used for snapshot
+    :param id: unique id of the snapshot file, default: `None` 
     :param output: function to output the representation of the value
     :param path: custom snapshot path, default: `./snapshots`
     :param name: name of the snapshot value inside the snapshots file, default: `snapshot`
@@ -110,11 +111,12 @@ def snapshot(value, id, output=None, path=None, name="snapshot", encoder=repr):
     frame = inspect.currentframe().f_back
     frame_info = inspect.getframeinfo(frame)
 
-    id = '.'.join([
-        os.path.basename(frame_info.filename),
-        str(id).lower(),
-        "snapshot"
-    ])
+    id_parts = [os.path.basename(frame_info.filename)]
+    if id is not None:
+        id_parts.append(str(id).lower())
+    id_parts.append("snapshot")
+
+    id = '.'.join(id_parts)
 
     if path is None:
         path = os.path.join(os.path.dirname(frame_info.filename), "snapshots")
