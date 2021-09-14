@@ -82,6 +82,7 @@ class retries(object):
         self.caught_exception = None
         self.stop = False
         self.started = None
+        self.number = -1
 
     def __iter__(self):
         if self.stop:
@@ -100,6 +101,8 @@ class retries(object):
 
         if self.timeout is not None and time.time() - self.started >= self.timeout:
             raise self.caught_exception from None
+
+        self.number += 1
 
         return self
 
