@@ -14,6 +14,7 @@
 # limitations under the License.
 import re
 import os
+import time
 import inspect
 import textwrap
 import difflib
@@ -21,7 +22,7 @@ import difflib
 from importlib.machinery import SourceFileLoader
 
 from testflows.asserts import error
-__all__ = ["raises", "snapshot"]
+__all__ = ["raises", "snapshot", "retries"]
 
 def varname(s):
     """Make valid Python variable name.
@@ -58,6 +59,60 @@ class raises(object):
             raise AssertionError(error(desc="unexpected exception %s" % type,
                 frame=self.frame, frame_info=self.frame_info, nodes=[]))
         return True
+
+class retries(object):
+    """Retries object that can be looped over and used as context manager
+    to retry some pieve of code until it succeeds and no exception
+    is raised.
+
+    ```python
+    for retry in retries(AssertionError, timeout=30, delay=0):
+        with retry:
+            my_code()
+    ```
+
+    :param *exceptions: expected exceptions
+    :param timeout: timeout in sec, default: None
+    :param delay: delay in sec between retries, default: 0 sec
+    """
+    def __init__(self, *exceptions, timeout=None, delay=0):
+        self.exceptions = exceptions
+        self.timeout = float(timeout) if timeout is not None else None
+        self.delay = float(delay)
+        self.caught_exception = None
+        self.stop = False
+        self.started = None
+
+    def __iter__(self):
+        if self.stop:
+            raise RuntimeError("retries object has alredy been consumed")
+        return self
+
+    def __next__(self):
+        if self.stop:
+            raise StopIteration
+
+        if self.started and self.delay:
+            time.sleep(self.delay)
+
+        if not self.started:
+            self.started = time.time()
+
+        if self.timeout is not None and time.time() - self.started >= self.timeout:
+            raise self.caught_exception from None
+
+        return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        self.caught_exception = exc_value
+        
+        if isinstance(exc_value, self.exceptions):
+            return True
+
+        self.stop = True
 
 def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=repr):
     """Compare value representation to a stored snapshot.
