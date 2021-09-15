@@ -15,6 +15,7 @@
 import re
 import os
 import time
+import random
 import inspect
 import functools
 import textwrap
@@ -75,27 +76,46 @@ class retries(object):
     :param *exceptions: expected exceptions, default: Exception
     :param timeout: timeout in sec, default: None
     :param delay: delay in sec between retries, default: 0 sec
+    :param backoff: backoff multiplier that is applied to the delay, default: 1
+    :param jitter: jitter added to delay between retries specified as
+                   a tuple(min, max), default: (0,0)
     """
-    def __init__(self, *exceptions, timeout=None, delay=0):
+    def __init__(self, *exceptions, timeout=None, delay=0, backoff=1, jitter=None):
         self.exceptions = exceptions if exceptions else (Exception,)
         self.timeout = float(timeout) if timeout is not None else None
         self.delay = float(delay)
+        self.backoff = backoff
+        self.jitter = tuple(jitter) if jitter else tuple([0, 0])
+        self.delay_with_backoff = self.delay
         self.caught_exception = None
         self.stop = False
         self.started = None
         self.number = -1
 
     def __iter__(self):
-        if self.stop:
-            raise RuntimeError("retries object has alredy been consumed")
+        # re-initialize state
+        self.stop = False
+        self.delay_with_backoff = self.delay
+        self.number = -1
+        self.caught_exception = None
+        self.started = None
         return self
 
     def __next__(self):
         if self.stop:
             raise StopIteration
 
-        if self.started and self.delay:
-            time.sleep(self.delay)
+        if self.started and self.delay_with_backoff:
+            if self.backoff:
+                self.delay_with_backoff *= self.backoff
+
+            delay = self.delay_with_backoff
+            if self.jitter:
+                delay += random.uniform(*self.jitter)
+
+            delay = min(delay, max(0, self.timeout - (time.time() - self.started)))
+
+            time.sleep(delay)
 
         if not self.started:
             self.started = time.time()
@@ -143,10 +163,13 @@ class retry(object):
     :param *exceptions: expected exceptions, default: Exception
     :param timeout: timeout in sec, default: None
     :param delay: delay in sec between retries, default: 0 sec
+    :param backoff: backoff multiplier that is applied to the delay, default: 1
+    :param jitter: jitter added to delay between retries specified as
+                   a tuple(min, max), default: (0,0)
     """
-    def __init__(self, *exceptions, timeout=None, delay=0):
-        self.retries = retries(*exceptions, timeout=timeout, delay=delay)
-        self.call = self._call
+    def __init__(self, *exceptions, timeout=None, delay=0, backoff=0, jitter=None):
+        self.retries = retries(*exceptions, timeout=timeout, delay=delay,
+            backoff=backoff, jitter=jitter)
 
     def __call__(self, func):
         @functools.wraps(func)
@@ -156,11 +179,14 @@ class retry(object):
                     return func(*args, **kwargs)
         return wrapper
 
-    def _call(self, func, *args, **kwargs):
+    def call(self, func, *args, **kwargs):
         """Retry function call.
 
         ```python
         retry(AssertionError, timeout=30).call(func, *args, **kwargs)
+
+        # this is really just an alternative to
+        retry(AssertionError, timeout=30)(func)(*args, **kwargs)
         ```
 
         :param func: function to call with retry
@@ -168,20 +194,6 @@ class retry(object):
         :param kwargs: optional function keyword arguments
         """
         return self(func)(*args, **kwargs)
-
-    @staticmethod
-    def call(func, *args, **kwargs):
-        """Retry function call until it succeeds.
-
-        ```python
-        retry.call(func, *args, **kwargs)
-        ```
-
-        :param func: function to call with retry
-        :param args: optional function arguments
-        :param kwargs: optional function keyword arguments
-        """
-        return retry().call(func, *args, **kwargs)
 
 def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=repr):
     """Compare value representation to a stored snapshot.

@@ -63,9 +63,6 @@ def regression(self):
         with Test("retry object with no args"):
             retry().call(my_func)
 
-        with Test("retry class use call staticmethod"):
-            retry.call(my_func)
-
     with Suite("errors"):
         with Test("errors no fails"):
             with errors():
