@@ -16,13 +16,14 @@ import re
 import os
 import time
 import inspect
+import functools
 import textwrap
 import difflib
 
 from importlib.machinery import SourceFileLoader
 
 from testflows.asserts import error
-__all__ = ["raises", "snapshot", "retries"]
+__all__ = ["raises", "snapshot", "retries", "retry"]
 
 def varname(s):
     """Make valid Python variable name.
@@ -71,12 +72,12 @@ class retries(object):
             my_code()
     ```
 
-    :param *exceptions: expected exceptions
+    :param *exceptions: expected exceptions, default: Exception
     :param timeout: timeout in sec, default: None
     :param delay: delay in sec between retries, default: 0 sec
     """
     def __init__(self, *exceptions, timeout=None, delay=0):
-        self.exceptions = exceptions
+        self.exceptions = exceptions if exceptions else (Exception,)
         self.timeout = float(timeout) if timeout is not None else None
         self.delay = float(delay)
         self.caught_exception = None
@@ -111,11 +112,76 @@ class retries(object):
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         self.caught_exception = exc_value
-        
+
         if isinstance(exc_value, self.exceptions):
             return True
 
         self.stop = True
+
+class retry(object):
+    """Retry decorator or retry function caller.
+
+    Use as decorator.
+
+    ```python
+    @retry()
+    def my_func():
+        pass
+
+    @retry(AssertionError, timeout=30, delay=1)
+    def my_func():
+        pass
+    ```
+
+    Use as retry function caller.
+
+    ```python
+    retry.call(func, *args, **kwargs)
+    retry(AssertionError, timeout=30).call(func, *args, **kwargs)
+    ```
+
+    :param *exceptions: expected exceptions, default: Exception
+    :param timeout: timeout in sec, default: None
+    :param delay: delay in sec between retries, default: 0 sec
+    """
+    def __init__(self, *exceptions, timeout=None, delay=0):
+        self.retries = retries(*exceptions, timeout=timeout, delay=delay)
+        self.call = self._call
+
+    def __call__(self, func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for _retry in self.retries:
+                with _retry:
+                    return func(*args, **kwargs)
+        return wrapper
+
+    def _call(self, func, *args, **kwargs):
+        """Retry function call.
+
+        ```python
+        retry(AssertionError, timeout=30).call(func, *args, **kwargs)
+        ```
+
+        :param func: function to call with retry
+        :param args: optional function arguments
+        :param kwargs: optional function keyword arguments
+        """
+        return self(func)(*args, **kwargs)
+
+    @staticmethod
+    def call(func, *args, **kwargs):
+        """Retry function call until it succeeds.
+
+        ```python
+        retry.call(func, *args, **kwargs)
+        ```
+
+        :param func: function to call with retry
+        :param args: optional function arguments
+        :param kwargs: optional function keyword arguments
+        """
+        return retry().call(func, *args, **kwargs)
 
 def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=repr):
     """Compare value representation to a stored snapshot.
@@ -127,11 +193,11 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
         <test file name>[.<id>].snapshot
 
     :param value: value to be used for snapshot
-    :param id: unique id of the snapshot file, default: `None` 
+    :param id: unique id of the snapshot file, default: `None`
     :param output: function to output the representation of the value
     :param path: custom snapshot path, default: `./snapshots`
     :param name: name of the snapshot value inside the snapshots file, default: `snapshot`
-    :paran encoder: custom snapshot encoder, default: `repr`
+    :param encoder: custom snapshot encoder, default: `repr`
     """
     name = varname(name) if name != "snapshot" else name
 
