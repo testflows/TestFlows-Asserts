@@ -117,11 +117,11 @@ class retries(object):
 
             time.sleep(delay)
 
+        if self.started and self.timeout is not None and time.time() - self.started >= self.timeout:
+            raise self.caught_exception from None
+
         if not self.started:
             self.started = time.time()
-
-        if self.timeout is not None and time.time() - self.started >= self.timeout:
-            raise self.caught_exception from None
 
         self.number += 1
 
