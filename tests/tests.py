@@ -19,7 +19,7 @@ import tempfile
 
 from testflows.core import main, note
 from testflows.core import TestModule, Module, Test, Suite
-from testflows.asserts import error, errors, values, raises, snapshot, retries, retry
+from testflows.asserts import error, errors, values, raises, snapshot
 
 def snap(value):
     """Take a snapshot of the value. If the value is an
@@ -41,28 +41,6 @@ def snap(value):
 def regression(self):
     """TestFlows - Asserts regression suite.
     """
-    with Suite("retries"):
-        with Test("retry some code until succeeds"):
-            for r in retries(AssertionError, timeout=5, delay=0):
-                with r:
-                    note(f"attempt #{r.number}")
-                    assert random.random() > 0.2, error()
-
-    with Suite("retry decorator"):
-        @retry(AssertionError, timeout=5, delay=0)
-        def my_func():
-            assert random.random() > 0.2, error()
-        my_func()
-
-    with Suite("retry function caller"):
-        with Test("retry object"):
-            def my_func():
-                assert random.random() > 0.2, error()
-            retry(AssertionError, timeout=5, delay=0).call(my_func)
-
-        with Test("retry object with no args"):
-            retry().call(my_func)
-
     with Suite("errors"):
         with Test("errors no fails"):
             with errors():

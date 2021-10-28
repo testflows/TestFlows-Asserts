@@ -24,7 +24,7 @@ import difflib
 from importlib.machinery import SourceFileLoader
 
 from testflows.asserts import error
-__all__ = ["raises", "snapshot", "retries", "retry"]
+__all__ = ["raises", "snapshot"]
 
 def varname(s):
     """Make valid Python variable name.
@@ -61,139 +61,6 @@ class raises(object):
             raise AssertionError(error(desc="unexpected exception %s" % type,
                 frame=self.frame, frame_info=self.frame_info, nodes=[]))
         return True
-
-class retries(object):
-    """Retries object that can be looped over and used as context manager
-    to retry some pieve of code until it succeeds and no exception
-    is raised.
-
-    ```python
-    for retry in retries(AssertionError, timeout=30, delay=0):
-        with retry:
-            my_code()
-    ```
-
-    :param *exceptions: expected exceptions, default: Exception
-    :param timeout: timeout in sec, default: None
-    :param delay: delay in sec between retries, default: 0 sec
-    :param backoff: backoff multiplier that is applied to the delay, default: 1
-    :param jitter: jitter added to delay between retries specified as
-                   a tuple(min, max), default: (0,0)
-    """
-    def __init__(self, *exceptions, timeout=None, delay=0, backoff=1, jitter=None):
-        self.exceptions = exceptions if exceptions else (Exception,)
-        self.timeout = float(timeout) if timeout is not None else None
-        self.delay = float(delay)
-        self.backoff = backoff
-        self.jitter = tuple(jitter) if jitter else tuple([0, 0])
-        self.delay_with_backoff = self.delay
-        self.caught_exception = None
-        self.stop = False
-        self.started = None
-        self.number = -1
-
-    def __iter__(self):
-        # re-initialize state
-        self.stop = False
-        self.delay_with_backoff = self.delay
-        self.number = -1
-        self.caught_exception = None
-        self.started = None
-        return self
-
-    def __next__(self):
-        if self.stop:
-            raise StopIteration
-
-        if self.started and self.delay_with_backoff:
-            if self.backoff:
-                self.delay_with_backoff *= self.backoff
-
-            delay = self.delay_with_backoff
-            if self.jitter:
-                delay += random.uniform(*self.jitter)
-
-            delay = min(delay, max(0, self.timeout - (time.time() - self.started)))
-
-            time.sleep(delay)
-
-        if self.started and self.timeout is not None and time.time() - self.started >= self.timeout:
-            raise self.caught_exception from None
-
-        if not self.started:
-            self.started = time.time()
-
-        self.number += 1
-
-        return self
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        self.caught_exception = exc_value
-
-        if isinstance(exc_value, self.exceptions):
-            return True
-
-        self.stop = True
-
-class retry(object):
-    """Retry decorator or retry function caller.
-
-    Use as decorator.
-
-    ```python
-    @retry()
-    def my_func():
-        pass
-
-    @retry(AssertionError, timeout=30, delay=1)
-    def my_func():
-        pass
-    ```
-
-    Use as retry function caller.
-
-    ```python
-    retry.call(func, *args, **kwargs)
-    retry(AssertionError, timeout=30).call(func, *args, **kwargs)
-    ```
-
-    :param *exceptions: expected exceptions, default: Exception
-    :param timeout: timeout in sec, default: None
-    :param delay: delay in sec between retries, default: 0 sec
-    :param backoff: backoff multiplier that is applied to the delay, default: 1
-    :param jitter: jitter added to delay between retries specified as
-                   a tuple(min, max), default: (0,0)
-    """
-    def __init__(self, *exceptions, timeout=None, delay=0, backoff=0, jitter=None):
-        self.retries = retries(*exceptions, timeout=timeout, delay=delay,
-            backoff=backoff, jitter=jitter)
-
-    def __call__(self, func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            for _retry in self.retries:
-                with _retry:
-                    return func(*args, **kwargs)
-        return wrapper
-
-    def call(self, func, *args, **kwargs):
-        """Retry function call.
-
-        ```python
-        retry(AssertionError, timeout=30).call(func, *args, **kwargs)
-
-        # this is really just an alternative to
-        retry(AssertionError, timeout=30)(func)(*args, **kwargs)
-        ```
-
-        :param func: function to call with retry
-        :param args: optional function arguments
-        :param kwargs: optional function keyword arguments
-        """
-        return self(func)(*args, **kwargs)
 
 def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=repr):
     """Compare value representation to a stored snapshot.
