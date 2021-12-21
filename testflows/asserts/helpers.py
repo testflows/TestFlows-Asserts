@@ -131,7 +131,7 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
         os.makedirs(path)
 
     if os.path.exists(filename):
-        module_name = f"snapshot_{hashlib.sha1(filename.encode('utf-8')).hexdigest()}"
+        module_name = f"snapshot_{hashlib.sha1(os.path.abspath(filename).encode('utf-8')).hexdigest()}"
         snapshot_module = SourceFileLoader(module_name, filename).load_module()
         if hasattr(snapshot_module, name):
             snapshot_value = getattr(snapshot_module, name)
