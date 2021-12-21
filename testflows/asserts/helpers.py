@@ -17,6 +17,7 @@ import os
 import time
 import random
 import inspect
+import hashlib
 import functools
 import textwrap
 import difflib
@@ -130,7 +131,8 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
         os.makedirs(path)
 
     if os.path.exists(filename):
-        snapshot_module = SourceFileLoader("snapshot", filename).load_module()
+        module_name = f"snapshot_{hashlib.sha1(filename.encode('utf-8')).hexdigest()}"
+        snapshot_module = SourceFileLoader(module_name, filename).load_module()
         if hasattr(snapshot_module, name):
             snapshot_value = getattr(snapshot_module, name)
             if not (snapshot_value == repr_value):
