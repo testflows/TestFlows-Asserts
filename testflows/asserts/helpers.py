@@ -25,24 +25,27 @@ import difflib
 from importlib.machinery import SourceFileLoader
 
 from testflows.asserts import error
+
 __all__ = ["raises", "snapshot"]
 
+
 def varname(s):
-    """Make valid Python variable name.
-    """
+    """Make valid Python variable name."""
     invalid_chars = re.compile("[^0-9a-zA-Z_]")
     invalid_start_chars = re.compile("^[^a-zA-Z_]+")
 
-    name = invalid_chars.sub('_', str(s))
-    name = invalid_start_chars.sub('', name)
+    name = invalid_chars.sub("_", str(s))
+    name = invalid_start_chars.sub("", name)
     if not name:
         raise ValueError(f"can't convert to valid name '{s}'")
     return name
+
 
 class raises(object):
     """Context manager that consumes expected exceptions
     else raises an AssertionError.
     """
+
     def __init__(self, *excs):
         self.excs = excs
         self.exception = None
@@ -56,12 +59,25 @@ class raises(object):
         if type in self.excs:
             self.exception = value
         elif type is None:
-            raise AssertionError(error(desc="exception %s was not raised" % repr(self.excs),
-                frame=self.frame, frame_info=self.frame_info, nodes=[]))
+            raise AssertionError(
+                error(
+                    desc="exception %s was not raised" % repr(self.excs),
+                    frame=self.frame,
+                    frame_info=self.frame_info,
+                    nodes=[],
+                )
+            )
         else:
-            raise AssertionError(error(desc="unexpected exception %s" % type,
-                frame=self.frame, frame_info=self.frame_info, nodes=[]))
+            raise AssertionError(
+                error(
+                    desc="unexpected exception %s" % type,
+                    frame=self.frame,
+                    frame_info=self.frame_info,
+                    nodes=[],
+                )
+            )
         return True
+
 
 def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=repr):
     """Compare value representation to a stored snapshot.
@@ -96,14 +112,27 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
             r = "SnapshotError("
             r += "\nfilename=" + self.filename
             r += "\nname=" + self.name
-            r += "\nsnapshot_value=\"\"\"\n"
+            r += '\nsnapshot_value="""\n'
             r += textwrap.indent(self.snapshot_value, " " * 4)
-            r += "\"\"\",\nactual_value=\"\"\"\n"
+            r += '""",\nactual_value="""\n'
             r += textwrap.indent(self.actual_value, " " * 4)
-            r += "\"\"\",\ndiff=\"\"\"\n"
-            r += textwrap.indent('\n'.join([line.strip("\n") for line in difflib.unified_diff(self.snapshot_value.splitlines(), self.actual_value.splitlines(), self.filename)]), " " * 4)
-            r += "\n\"\"\")"
+            r += '""",\ndiff="""\n'
+            r += textwrap.indent(
+                "\n".join(
+                    [
+                        line.strip("\n")
+                        for line in difflib.unified_diff(
+                            self.snapshot_value.splitlines(),
+                            self.actual_value.splitlines(),
+                            self.filename,
+                        )
+                    ]
+                ),
+                " " * 4,
+            )
+            r += '\n""")'
             return r
+
     try:
         repr_value = encoder(value)
     except:
@@ -120,7 +149,7 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
         id_parts.append(str(id).lower())
     id_parts.append("snapshot")
 
-    id = '.'.join(id_parts)
+    id = ".".join(id_parts)
 
     if path is None:
         path = os.path.join(os.path.dirname(frame_info.filename), "snapshots")
