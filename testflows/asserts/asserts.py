@@ -24,15 +24,12 @@ import builtins
 
 __all__ = ["error", "errors", "values"]
 
-
 class values(object):
     """Obtains value so that expression
     does not need to be reinterpreted if
     assertion fails.
     """
-
     __slots__ = ("stack",)
-
     def __init__(self):
         self.stack = []
 
@@ -52,7 +49,6 @@ class AssertEval(ast.NodeVisitor):
 
     :param frame: frame where the assertion occured
     """
-
     # Known types
     _simple = (
         ast.Num,
@@ -70,7 +66,7 @@ class AssertEval(ast.NodeVisitor):
         ast.Dict,
         ast.Starred,
         ast.Compare,
-    )
+     )
 
     # operator symbols
     _op_symbols = {
@@ -105,13 +101,13 @@ class AssertEval(ast.NodeVisitor):
         ast.Invert: "~",
         ast.Not: "not",
         ast.UAdd: "+",
-        ast.USub: "-",
+        ast.USub: "-"
     }
 
     # boolean operators
     _boolean_ops = {
         ast.And: lambda left, right: left and right,
-        ast.Or: lambda left, right: left or right,
+        ast.Or: lambda left, right: left or right
     }
 
     # binary operators
@@ -121,13 +117,13 @@ class AssertEval(ast.NodeVisitor):
         ast.Mult: lambda left, right: left * right,
         ast.Div: lambda left, right: left / right,
         ast.Mod: lambda left, right: left % right,
-        ast.Pow: lambda left, right: left**right,
+        ast.Pow: lambda left, right: left ** right,
         ast.LShift: lambda left, right: left << right,
         ast.RShift: lambda left, right: left >> right,
         ast.BitOr: lambda left, right: left | right,
         ast.BitXor: lambda left, right: left ^ right,
         ast.BitAnd: lambda left, right: left & right,
-        ast.FloorDiv: lambda left, right: left // right,
+        ast.FloorDiv: lambda left, right: left // right
     }
 
     # unary operators
@@ -135,7 +131,7 @@ class AssertEval(ast.NodeVisitor):
         ast.Invert: lambda operand: ~operand,
         ast.Not: lambda operand: not operand,
         ast.UAdd: lambda operand: +operand,
-        ast.USub: lambda operand: -operand,
+        ast.USub: lambda operand: -operand
     }
 
     # comparison operators
@@ -149,12 +145,12 @@ class AssertEval(ast.NodeVisitor):
         ast.Is: lambda left, right: left is right,
         ast.IsNot: lambda left, right: left is not right,
         ast.In: lambda left, right: left in right,
-        ast.NotIn: lambda left, right: left not in right,
+        ast.NotIn: lambda left, right: left not in right
     }
 
     class FuncResult(object):
-        """Result wrapper."""
-
+        """Result wrapper.
+        """
         def __init__(self, result):
             self.result = result
 
@@ -162,39 +158,35 @@ class AssertEval(ast.NodeVisitor):
             return "= " + _saferepr(self.result)
 
     class DiffResult(object):
-        """Compare diffable result wrapper."""
-
+        """Compare diffable result wrapper.
+        """
         def __init__(self, result, diff):
             self.result = result
             self.diff = diff
 
         def __repr__(self):
-            return _saferepr(self.result) + "\n" + self.diff
+            return _saferepr(self.result) + '\n' + self.diff
 
     def __init__(self, frame, frame_info):
         def error(desc=None):
             pass
-
         self.frame = frame
         self.frame_info = frame_info
         self.f_globals = self.frame.f_globals
         self.f_locals = dict(self.frame.f_locals)
-        self.f_locals["error"] = error
+        self.f_locals['error'] = error
         self.nodes = []
         self.expression = None
         self._is_assert = False
 
     def eval(self):
-        """Evaluate assert expression."""
+        """Evaluate assert expression.
+        """
         expression_ast = None
         if self.expression:
             expression_ast = ast.parse(self.expression)
         else:
-            code = (
-                self.frame_info.code_context[0].strip()
-                if self.frame_info.code_context
-                else None
-            )
+            code = self.frame_info.code_context[0].strip() if self.frame_info.code_context else None
             if code is not None:
                 expression = ""
                 expression_ast = None
@@ -226,24 +218,16 @@ class AssertEval(ast.NodeVisitor):
             return result
 
         diff_types = (str, list, tuple, dict, set)
-        if (
-            isinstance(left, diff_types)
+        if (isinstance(left, diff_types)
             and isinstance(right, diff_types)
-            and isinstance(right, type(left))
-        ):
+            and isinstance(right, type(left))):
             if isinstance(left, str):
                 left_repr = left.splitlines()
                 right_repr = right.splitlines()
             else:
                 left_repr = pprint.pformat(left).splitlines()
                 right_repr = pprint.pformat(right).splitlines()
-            diff = "\n".join(
-                itertools.islice(
-                    difflib.unified_diff(left_repr, right_repr, n=0, lineterm=""),
-                    2,
-                    None,
-                )
-            )
+            diff = "\n".join(itertools.islice(difflib.unified_diff(left_repr, right_repr, n=0, lineterm=""),2,None))
             return self.DiffResult(result, diff)
 
         return result
@@ -256,7 +240,7 @@ class AssertEval(ast.NodeVisitor):
         :param col_offset: column offset
         """
         expression = self.expression[:lineno]
-        expression[-1] = expression[-1][: col_offset + 1].rstrip("({[")
+        expression[-1] = expression[-1][:col_offset+1].rstrip("({[")
         op_sym = self._op_symbols.get(op_type, None)
         if op_sym is None:
             raise RuntimeError("unknown operator type '%s'" % op_type)
@@ -286,9 +270,7 @@ class AssertEval(ast.NodeVisitor):
         result = left
         if not isinstance(node.left, self._simple):
             self.nodes.append((result, node.left))
-        for idx, operator, comparator in zip(
-            range(len(node.ops)), node.ops, node.comparators
-        ):
+        for idx, operator, comparator in zip(range(len(node.ops)), node.ops, node.comparators):
             op = type(operator)
             func = self._compare_ops[op]
             right = self.visit(comparator)
@@ -300,12 +282,8 @@ class AssertEval(ast.NodeVisitor):
             if not isinstance(comparator, self._simple):
                 self.nodes.append((right, comparator))
             _operator = copy.copy(operator)
-            _operator.lineno, _operator.col_offset = self._find_operator(
-                op, comparator.lineno, comparator.col_offset
-            )
-            self.nodes.append(
-                (self.FuncResult(self._diff(op, op_result, left, right)), _operator)
-            )
+            _operator.lineno, _operator.col_offset = self._find_operator(op, comparator.lineno, comparator.col_offset)
+            self.nodes.append((self.FuncResult(self._diff(op, op_result, left, right)), _operator))
             left = right
         return result
 
@@ -331,14 +309,11 @@ class AssertEval(ast.NodeVisitor):
         elif getattr(builtins, name):
             func = getattr(builtins, name)
         else:
-            raise NameError(
-                "Function '{}' is not defined".format(name),
-                node.lineno,
-                node.col_offset,
-            )
+            raise NameError("Function '{}' is not defined".format(name),
+                            node.lineno, node.col_offset)
 
         if isinstance(func, values):
-            if func.stack:
+            if (func.stack):
                 result = func.stack.pop(0)
             else:
                 result = None
@@ -383,9 +358,7 @@ class AssertEval(ast.NodeVisitor):
             self.nodes.append((right, node.right))
         result = func(left, right)
         _operator = copy.copy(node.op)
-        _operator.lineno, _operator.col_offset = self._find_operator(
-            op, node.right.lineno, node.right.col_offset
-        )
+        _operator.lineno, _operator.col_offset = self._find_operator(op, node.right.lineno, node.right.col_offset)
         self.nodes.append((self.FuncResult(result), _operator))
         return result
 
@@ -428,9 +401,7 @@ class AssertEval(ast.NodeVisitor):
                 self.nodes.append((right, value))
             result = func(left, right)
             _operator = copy.copy(operator)
-            _operator.lineno, _operator.col_offset = self._find_operator(
-                op, value.lineno, value.col_offset
-            )
+            _operator.lineno, _operator.col_offset = self._find_operator(op, value.lineno, value.col_offset)
             self.nodes.append((self.FuncResult(result), _operator))
             left = result
         return result
@@ -468,7 +439,7 @@ class AssertEval(ast.NodeVisitor):
         return result
 
     def visit_Dict(self, node):
-        keys = []
+        keys= []
         for k in node.keys:
             v = self.visit(k)
             if not isinstance(k, self._simple):
@@ -497,7 +468,6 @@ class AssertEval(ast.NodeVisitor):
             bytecode = compile(ast.Module([node]), "assertion node", "exec")
             return exec(bytecode, f_globals)
         return super(AssertEval, self).generic_visit(node)
-
 
 def _code_block(filename, lineno, before=8, after=4):
     """Retrieve code blocks around a given line
@@ -544,19 +514,8 @@ class error(object):
     :param where_section: a flag to include a where section
         that shows source code where assert expression is found, default: `True`
     """
-
-    def __init__(
-        self,
-        desc=None,
-        frame=None,
-        frame_info=None,
-        expression=None,
-        nodes=None,
-        expression_section=True,
-        description_section=True,
-        values_section=True,
-        where_section=True,
-    ):
+    def __init__(self, desc=None, frame=None, frame_info=None, expression=None, nodes=None,
+            expression_section=True, description_section=True, values_section=True, where_section=True):
         self.frame = frame
         if self.frame is None:
             self.frame = inspect.currentframe().f_back
@@ -584,7 +543,8 @@ class error(object):
         return self.generate_message()
 
     def generate_expression_section(self):
-        """Return expression section."""
+        """Return expression section.
+        """
         section = ""
         if self.expression_section and self.expression:
             section += "\n\nThe following assertion was not satisfied"
@@ -593,7 +553,8 @@ class error(object):
         return section
 
     def generate_description_section(self):
-        """Return description section."""
+        """Return description section.
+        """
         section = ""
         if self.description_section and self.desc:
             section += "\n\nDescription"
@@ -601,7 +562,8 @@ class error(object):
         return section
 
     def generate_values_section(self):
-        """Return values section."""
+        """Return values section.
+        """
         section = ""
         if self.values_section and self.nodes:
             section += "\n\nAssertion values"
@@ -616,19 +578,15 @@ class error(object):
         return section
 
     def generate_where_section(self):
-        """Return where section."""
+        """Return where section.
+        """
         section = ""
         if self.where_section and self.frame_info.code_context:
             section += "\n\nWhere"
-            section += "\n  File '%s', line %d in '%s'" % (
-                self.frame_info.filename,
-                self.frame_info.lineno,
-                self.frame_info.function,
-            )
+            section += "\n  File '%s', line %d in '%s'" % (self.frame_info.filename,
+                self.frame_info.lineno, self.frame_info.function)
 
-            section += "\n\n" + "".join(
-                self.code_block(self.frame_info.filename, self.frame_info.lineno)
-            )
+            section += "\n\n" + "".join(self.code_block(self.frame_info.filename, self.frame_info.lineno))
         return section
 
     def generate_message(self):
@@ -675,14 +633,12 @@ class errors(object):
     """Context manager that can be used
     to wrap multiple assert statements.
     """
-
     class softerror(object):
         """Context manager that is used
         to wrap soft assertion.
 
         :param errors: list to which an exception will be added
         """
-
         def __init__(self, errors):
             self.errors = errors
 
@@ -702,13 +658,8 @@ class errors(object):
                 self.errors.append(exc_val)
                 return True
 
-    def __init__(
-        self,
-        expression_section=True,
-        description_section=True,
-        values_section=True,
-        where_section=True,
-    ):
+    def __init__(self, expression_section=True, description_section=True,
+            values_section=True, where_section=True):
         self.errors = []
         self.expression_section = expression_section
         self.description_section = description_section
@@ -752,7 +703,6 @@ class errors(object):
         error context manager.
         """
         return self.softerror(self.errors)
-
 
 def _saferepr(value):
     try:
