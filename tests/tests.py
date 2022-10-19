@@ -18,7 +18,7 @@ import random
 import tempfile
 
 from testflows.core import main, note
-from testflows.core import TestModule, Module, Test, Suite
+from testflows.core import TestModule, Module, Test, Suite, xfail
 from testflows.asserts import error, errors, values, raises, snapshot
 
 def snap(value):
@@ -634,6 +634,16 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(snapshot(e.exception, "common-idioms-dict-comprehension", encoder=snap)), error()
+
+            with Test("chained comparison"):
+                with raises(AssertionError) as e:
+                    x = 2
+                    assert 1 >= x <= 3, error()
+                note(e.exception)
+                xfail("known issue with chained comparisons")
+                with values() as that:
+                    assert that(snapshot(e.exception, "common-idioms-chained-comparison", encoder=snap)), error()
+
 
 if main():
     Module(run=regression)
