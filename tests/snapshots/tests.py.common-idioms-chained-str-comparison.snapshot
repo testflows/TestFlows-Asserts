@@ -1,0 +1,20 @@
+snapshot = r"""Oops! Assertion failed
+
+The following assertion was not satisfied
+  assert "a" == x <= "ccc" <= "ddd", error()
+
+Assertion values
+  assert "a" == x <= "ccc" <= "ddd", error()
+                ^ is 'bbb'
+  assert "a" == x <= "ccc" <= "ddd", error()
+             ^ is = False
+    @@ -1 +1 @@
+    -a
+    +bbb
+  assert "a" == x <= "ccc" <= "ddd", error()
+                  ^ is = True
+  assert "a" == x <= "ccc" <= "ddd", error()
+                           ^ is = True
+  assert "a" == x <= "ccc" <= "ddd", error()
+  ^ is False"""
+

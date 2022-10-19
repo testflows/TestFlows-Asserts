@@ -266,20 +266,25 @@ class AssertEval(ast.NodeVisitor):
         return result
 
     def visit_Compare(self, node):
-        result = self.visit(node.left)
+        left = self.visit(node.left)
+        result = left
         if not isinstance(node.left, self._simple):
             self.nodes.append((result, node.left))
-        for operator, comparator in zip(node.ops, node.comparators):
+        for idx, operator, comparator in zip(range(len(node.ops)), node.ops, node.comparators):
             op = type(operator)
             func = self._compare_ops[op]
             right = self.visit(comparator)
-            left = result
-            result = func(left, right)
+            op_result = func(left, right)
+            if idx > 0:
+                result = result and op_result
+            else:
+                result = op_result
             if not isinstance(comparator, self._simple):
                 self.nodes.append((right, comparator))
             _operator = copy.copy(operator)
             _operator.lineno, _operator.col_offset = self._find_operator(op, comparator.lineno, comparator.col_offset)
-            self.nodes.append((self.FuncResult(self._diff(op, result, left, right)), _operator))
+            self.nodes.append((self.FuncResult(self._diff(op, op_result, left, right)), _operator))
+            left = right
         return result
 
     def visit_Attribute(self, node):

@@ -638,12 +638,18 @@ def regression(self):
             with Test("chained comparison"):
                 with raises(AssertionError) as e:
                     x = 2
-                    assert 1 >= x <= 3, error()
+                    assert 1 >= x <= 3 <= 10, error()
                 note(e.exception)
-                xfail("known issue with chained comparisons")
                 with values() as that:
                     assert that(snapshot(e.exception, "common-idioms-chained-comparison", encoder=snap)), error()
 
+            with Test("chained str comparison"):
+                with raises(AssertionError) as e:
+                    x = "bbb"
+                    assert "a" == x <= "ccc" <= "ddd", error()
+                note(e.exception)
+                with values() as that:
+                    assert that(snapshot(e.exception, "common-idioms-chained-str-comparison", encoder=snap)), error()
 
 if main():
     Module(run=regression)
