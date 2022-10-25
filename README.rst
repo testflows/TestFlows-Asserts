@@ -6,9 +6,6 @@
    :alt: test bug
    :align: center
 
-**The asserts module is still work in progress and is currently under development.
-Please use it only for reference.**
-
 No magic, intuitive assertion library with descriptive error messages.
 Works with Python's `assert statement`_ and is inspired by pytest_
 support for assertions and `grappa-py/grappa`_ descriptive error messages.
