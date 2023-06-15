@@ -79,7 +79,7 @@ class raises(object):
         return True
 
 
-def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=repr):
+def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=repr, comment=None):
     """Compare value representation to a stored snapshot.
     If snapshot does not exist, assertion passes else
     representation of the value is compared to the stored snapshot.
@@ -94,16 +94,18 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
     :param path: custom snapshot path, default: `./snapshots`
     :param name: name of the snapshot value inside the snapshots file, default: `snapshot`
     :param encoder: custom snapshot encoder, default: `repr`
+    :param comment: optional comment to be added at the end of the snapshot value
     """
     name = varname(name) if name != "snapshot" else name
 
     class SnapshotError(object):
-        def __init__(self, filename, name, snapshot_value, actual_value, diff=None):
+        def __init__(self, filename, name, snapshot_value, actual_value, comment=None, diff=None):
             self.snapshot_value = snapshot_value
             self.actual_value = actual_value
             self.diff = diff
             self.filename = str(filename)
             self.name = str(name)
+            self.comment = str(comment) if comment is not None else None
 
         def __bool__(self):
             return False
@@ -112,6 +114,8 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
             r = "SnapshotError("
             r += "\nfilename=" + self.filename
             r += "\nname=" + self.name
+            if comment is not None:
+                r += "\ncomment=" + self.comment
             r += '\nsnapshot_value="""\n'
             r += textwrap.indent(self.snapshot_value, " " * 4)
             r += '""",\nactual_value="""\n'
@@ -165,12 +169,16 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
         if hasattr(snapshot_module, name):
             snapshot_value = getattr(snapshot_module, name)
             if not (snapshot_value == repr_value):
-                return SnapshotError(filename, name, snapshot_value, repr_value)
+                return SnapshotError(filename, name, snapshot_value, repr_value, comment)
             return True
 
     # no snapshot, so just store the representation
     with open(filename, "a") as fd:
         repr_value = repr_value.replace('"""', '""" + \'"""\' + r"""')
-        fd.write(f'''{name} = r"""{repr_value}"""\n\n''')
+        if comment is not None:
+            comment = f" # {comment}"
+        else:
+            comment = ""
+        fd.write(f'''{name} = r"""{repr_value}"""{comment}\n\n''')
 
     return True
