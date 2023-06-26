@@ -79,7 +79,9 @@ class raises(object):
         return True
 
 
-def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=repr, comment=None):
+def snapshot(
+    value, id=None, output=None, path=None, name="snapshot", encoder=repr, comment=None
+):
     """Compare value representation to a stored snapshot.
     If snapshot does not exist, assertion passes else
     representation of the value is compared to the stored snapshot.
@@ -99,7 +101,9 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
     name = varname(name) if name != "snapshot" else name
 
     class SnapshotError(object):
-        def __init__(self, filename, name, snapshot_value, actual_value, comment=None, diff=None):
+        def __init__(
+            self, filename, name, snapshot_value, actual_value, comment=None, diff=None
+        ):
             self.snapshot_value = snapshot_value
             self.actual_value = actual_value
             self.diff = diff
@@ -169,7 +173,9 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
         if hasattr(snapshot_module, name):
             snapshot_value = getattr(snapshot_module, name)
             if not (snapshot_value == repr_value):
-                return SnapshotError(filename, name, snapshot_value, repr_value, comment)
+                return SnapshotError(
+                    filename, name, snapshot_value, repr_value, comment
+                )
             return True
 
     # no snapshot, so just store the representation
@@ -179,6 +185,9 @@ def snapshot(value, id=None, output=None, path=None, name="snapshot", encoder=re
             comment = f" # {comment}"
         else:
             comment = ""
-        fd.write(f'''{name} = r"""{repr_value}"""{comment}\n\n''')
+        if repr_value.endswith('"'):
+            fd.write(f'''{name} = r"""{repr_value[:-1]}""" + '"'{comment}\n\n''')
+        else:
+            fd.write(f'''{name} = r"""{repr_value}"""{comment}\n\n''')
 
     return True
