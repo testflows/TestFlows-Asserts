@@ -40,7 +40,7 @@ def snap(value):
 
 
 @TestModule
-def regression(self):
+def regression(self, mode=snapshot.CHECK):
     """TestFlows - Asserts regression suite."""
     with Suite("errors"):
         with Test("errors no fails"):
@@ -56,7 +56,7 @@ def regression(self):
             note(e.exception)
             with values() as that:
                 assert that(
-                    snapshot(e.exception, "errors-errors", encoder=snap)
+                    snapshot(e.exception, "errors-errors", encoder=snap, mode=mode)
                 ), error()
 
         with Test("soft error no fails"):
@@ -77,7 +77,7 @@ def regression(self):
             note(e.exception)
             with values() as that:
                 assert that(
-                    snapshot(e.exception, "errors-soft-errors", encoder=snap)
+                    snapshot(e.exception, "errors-soft-errors", encoder=snap, mode=mode)
                 ), error()
 
         with Test("mixed errors no fails"):
@@ -102,7 +102,9 @@ def regression(self):
             note(e.exception)
             with values() as that:
                 assert that(
-                    snapshot(e.exception, "errors-mixed-errors", encoder=snap)
+                    snapshot(
+                        e.exception, "errors-mixed-errors", encoder=snap, mode=mode
+                    )
                 ), error()
 
     with Suite("helpers"):
@@ -114,6 +116,7 @@ def regression(self):
                             '"""hello"""there"""""foo""boo',
                             "snapshot-triple-quotes",
                             encoder=snap,
+                            mode=mode,
                         )
                     ), error()
 
@@ -125,6 +128,7 @@ def regression(self):
                             "snapshot-multiple-snapshots-in-the-same-file",
                             name="first",
                             encoder=snap,
+                            mode=mode,
                         )
                     ), error()
                     assert that(
@@ -133,6 +137,7 @@ def regression(self):
                             "snapshot-multiple-snapshots-in-the-same-file",
                             name="second",
                             encoder=snap,
+                            mode=mode,
                         )
                     ), error()
 
@@ -145,6 +150,7 @@ def regression(self):
                             "snapshot-value-ends-with-double-quotes",
                             name="third",
                             encoder=repr,
+                            mode=mode,
                         )
                     ), error()
 
@@ -156,7 +162,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "raises-not-raised", encoder=snap)
+                        snapshot(
+                            e.exception, "raises-not-raised", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("unexpected exception"):
@@ -177,7 +185,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "raised-ok", encoder=snap)
+                        snapshot(e.exception, "raised-ok", encoder=snap, mode=mode)
                     ), error()
 
     with Suite("assertions"):
@@ -188,7 +196,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "multiline-implicit", encoder=snap)
+                        snapshot(
+                            e.exception, "multiline-implicit", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("explicit"):
@@ -204,7 +214,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "multiline-explicit", encoder=snap)
+                        snapshot(
+                            e.exception, "multiline-explicit", encoder=snap, mode=mode
+                        )
                     ), error()
 
         with Test("values"):
@@ -221,6 +233,7 @@ def regression(self):
                                 e.exception,
                                 "values-assert_with_file_read",
                                 encoder=snap,
+                                mode=mode,
                             )
                         ), error()
 
@@ -234,7 +247,10 @@ def regression(self):
                 with values() as that:
                     assert that(
                         snapshot(
-                            e.exception, "values-assert_with_list_append", encoder=snap
+                            e.exception,
+                            "values-assert_with_list_append",
+                            encoder=snap,
+                            mode=mode,
                         )
                     ), error()
 
@@ -254,7 +270,7 @@ def regression(self):
                 with Test("assert exception snapshot value"):
                     with values() as that:
                         assert that(
-                            snapshot(e.exception, "func-args", encoder=snap)
+                            snapshot(e.exception, "func-args", encoder=snap, mode=mode)
                         ), error()
 
             with Test("*vargs"):
@@ -272,7 +288,7 @@ def regression(self):
                     assert vs[0] == vs[1]
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "func-vargs", encoder=snap)
+                        snapshot(e.exception, "func-vargs", encoder=snap, mode=mode)
                     ), error()
 
             with Test("**kwargs"):
@@ -290,7 +306,7 @@ def regression(self):
                     assert vs[0] == vs[1]
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "func-kwargs", encoder=snap)
+                        snapshot(e.exception, "func-kwargs", encoder=snap, mode=mode)
                     ), error()
 
             with Test("args *vargs **kwargs"):
@@ -308,7 +324,12 @@ def regression(self):
                     assert vs[0] == vs[1]
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "func-args_vargs_kwargs", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "func-args_vargs_kwargs",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
         with Suite("boolean ops"):
@@ -318,7 +339,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "boolean-ops-and", encoder=snap)
+                        snapshot(
+                            e.exception, "boolean-ops-and", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("multiple and"):
@@ -327,7 +350,12 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "boolean-ops-multiple-and", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "boolean-ops-multiple-and",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
             with Test("or"):
@@ -336,7 +364,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "boolean-ops-or", encoder=snap)
+                        snapshot(e.exception, "boolean-ops-or", encoder=snap, mode=mode)
                     ), error()
 
             with Test("multiple or"):
@@ -345,7 +373,12 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "boolean-ops-multiple-or", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "boolean-ops-multiple-or",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
         with Suite("binary ops"):
@@ -355,7 +388,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-add", encoder=snap)
+                        snapshot(e.exception, "binary-ops-add", encoder=snap, mode=mode)
                     ), error()
 
             with Test("sub"):
@@ -364,7 +397,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-sub", encoder=snap)
+                        snapshot(e.exception, "binary-ops-sub", encoder=snap, mode=mode)
                     ), error()
 
             with Test("mul"):
@@ -373,7 +406,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-mul", encoder=snap)
+                        snapshot(e.exception, "binary-ops-mul", encoder=snap, mode=mode)
                     ), error()
 
             with Test("div"):
@@ -382,7 +415,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-div", encoder=snap)
+                        snapshot(e.exception, "binary-ops-div", encoder=snap, mode=mode)
                     ), error()
 
             with Test("mod"):
@@ -391,7 +424,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-mod", encoder=snap)
+                        snapshot(e.exception, "binary-ops-mod", encoder=snap, mode=mode)
                     ), error()
 
             with Test("pow"):
@@ -400,7 +433,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-pow", encoder=snap)
+                        snapshot(e.exception, "binary-ops-pow", encoder=snap, mode=mode)
                     ), error()
 
             with Test("lshift"):
@@ -409,7 +442,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-lshift", encoder=snap)
+                        snapshot(
+                            e.exception, "binary-ops-lshift", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("rshift"):
@@ -418,7 +453,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-rshift", encoder=snap)
+                        snapshot(
+                            e.exception, "binary-ops-rshift", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("bitOr"):
@@ -427,7 +464,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-bitOr", encoder=snap)
+                        snapshot(
+                            e.exception, "binary-ops-bitOr", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("bitXor"):
@@ -436,7 +475,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-bitXor", encoder=snap)
+                        snapshot(
+                            e.exception, "binary-ops-bitXor", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("bitAnd"):
@@ -445,7 +486,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-bitAnd", encoder=snap)
+                        snapshot(
+                            e.exception, "binary-ops-bitAnd", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("floor div"):
@@ -454,7 +497,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-floor-div", encoder=snap)
+                        snapshot(
+                            e.exception, "binary-ops-floor-div", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("mixed ops"):
@@ -465,7 +510,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "binary-ops-mixed-ops", encoder=snap)
+                        snapshot(
+                            e.exception, "binary-ops-mixed-ops", encoder=snap, mode=mode
+                        )
                     ), error()
 
         with Suite("unary ops"):
@@ -475,7 +522,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "unary-ops-invert", encoder=snap)
+                        snapshot(
+                            e.exception, "unary-ops-invert", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("not"):
@@ -484,7 +533,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "unary-ops-not", encoder=snap)
+                        snapshot(e.exception, "unary-ops-not", encoder=snap, mode=mode)
                     ), error()
 
             with Test("uadd"):
@@ -493,7 +542,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "unary-ops-uadd", encoder=snap)
+                        snapshot(e.exception, "unary-ops-uadd", encoder=snap, mode=mode)
                     ), error()
 
             with Test("usub"):
@@ -502,7 +551,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "unary-ops-usub", encoder=snap)
+                        snapshot(e.exception, "unary-ops-usub", encoder=snap, mode=mode)
                     ), error()
 
         with Suite("compare ops"):
@@ -512,7 +561,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-eq", encoder=snap)
+                        snapshot(e.exception, "compare-ops-eq", encoder=snap, mode=mode)
                     ), error()
 
             with Test("eq str"):
@@ -521,7 +570,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-eq-str", encoder=snap)
+                        snapshot(
+                            e.exception, "compare-ops-eq-str", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("eq tuple"):
@@ -530,7 +581,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-eq-tuple", encoder=snap)
+                        snapshot(
+                            e.exception, "compare-ops-eq-tuple", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("eq list"):
@@ -539,7 +592,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-eq-list", encoder=snap)
+                        snapshot(
+                            e.exception, "compare-ops-eq-list", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("eq set"):
@@ -548,7 +603,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-eq-set", encoder=snap)
+                        snapshot(
+                            e.exception, "compare-ops-eq-set", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("eq dict"):
@@ -557,7 +614,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-eq-dict", encoder=snap)
+                        snapshot(
+                            e.exception, "compare-ops-eq-dict", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("ne"):
@@ -566,7 +625,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-ne", encoder=snap)
+                        snapshot(e.exception, "compare-ops-ne", encoder=snap, mode=mode)
                     ), error()
 
             with Test("lt"):
@@ -575,7 +634,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-lt", encoder=snap)
+                        snapshot(e.exception, "compare-ops-lt", encoder=snap, mode=mode)
                     ), error()
 
             with Test("le"):
@@ -584,7 +643,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-le", encoder=snap)
+                        snapshot(e.exception, "compare-ops-le", encoder=snap, mode=mode)
                     ), error()
 
             with Test("gt"):
@@ -593,7 +652,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-gt", encoder=snap)
+                        snapshot(e.exception, "compare-ops-gt", encoder=snap, mode=mode)
                     ), error()
 
             with Test("ge"):
@@ -602,7 +661,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-ge", encoder=snap)
+                        snapshot(e.exception, "compare-ops-ge", encoder=snap, mode=mode)
                     ), error()
 
             with Test("is"):
@@ -611,7 +670,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-is", encoder=snap)
+                        snapshot(e.exception, "compare-ops-is", encoder=snap, mode=mode)
                     ), error()
 
             with Test("is not"):
@@ -620,7 +679,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-is-not", encoder=snap)
+                        snapshot(
+                            e.exception, "compare-ops-is-not", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("in"):
@@ -629,7 +690,7 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-in", encoder=snap)
+                        snapshot(e.exception, "compare-ops-in", encoder=snap, mode=mode)
                     ), error()
 
             with Test("not in"):
@@ -638,7 +699,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "compare-ops-not-in", encoder=snap)
+                        snapshot(
+                            e.exception, "compare-ops-not-in", encoder=snap, mode=mode
+                        )
                     ), error()
 
         with Suite("common types"):
@@ -648,7 +711,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-types-str", encoder=snap)
+                        snapshot(
+                            e.exception, "common-types-str", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("list"):
@@ -657,7 +722,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-types-list", encoder=snap)
+                        snapshot(
+                            e.exception, "common-types-list", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("tuple"):
@@ -666,7 +733,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-types-tuple", encoder=snap)
+                        snapshot(
+                            e.exception, "common-types-tuple", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("dict"):
@@ -675,7 +744,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-types-dict", encoder=snap)
+                        snapshot(
+                            e.exception, "common-types-dict", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("object type"):
@@ -684,7 +755,12 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-types-object-type", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "common-types-object-type",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
             with Test("object"):
@@ -698,7 +774,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-types-bytes", encoder=snap)
+                        snapshot(
+                            e.exception, "common-types-bytes", encoder=snap, mode=mode
+                        )
                     ), error()
 
             with Test("unicode"):
@@ -707,7 +785,9 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-types-unicode", encoder=snap)
+                        snapshot(
+                            e.exception, "common-types-unicode", encoder=snap, mode=mode
+                        )
                     ), error()
 
         with Suite("common idioms"):
@@ -717,7 +797,12 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-idioms-if-else", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "common-idioms-if-else",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
             with Test("ellipsis"):
@@ -726,7 +811,12 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-idioms-ellipsis", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "common-idioms-ellipsis",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
             with Test("assignment"):
@@ -739,7 +829,12 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-idioms-assignment", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "common-idioms-assignment",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
             with Test("subscript"):
@@ -748,7 +843,12 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-idioms-subscript", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "common-idioms-subscript",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
             with Test("attr access"):
@@ -767,7 +867,12 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-idioms-lambda-name", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "common-idioms-lambda-name",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
             with Test("lambda expr"):
@@ -776,7 +881,12 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-idioms-lambda-expr", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "common-idioms-lambda-expr",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
             with Test("getitem"):
@@ -785,7 +895,12 @@ def regression(self):
                 note(e.exception)
                 with values() as that:
                     assert that(
-                        snapshot(e.exception, "common-idioms-getitem", encoder=snap)
+                        snapshot(
+                            e.exception,
+                            "common-idioms-getitem",
+                            encoder=snap,
+                            mode=mode,
+                        )
                     ), error()
 
             with Test("generator expression"):
@@ -822,6 +937,7 @@ def regression(self):
                             e.exception,
                             "common-idioms-list-comprehension",
                             encoder=snap,
+                            mode=mode,
                         )
                     ), error()
 
@@ -833,7 +949,10 @@ def regression(self):
                 with values() as that:
                     assert that(
                         snapshot(
-                            e.exception, "common-idioms-set-comprehension", encoder=snap
+                            e.exception,
+                            "common-idioms-set-comprehension",
+                            encoder=snap,
+                            mode=mode,
                         )
                     ), error()
 
@@ -848,6 +967,7 @@ def regression(self):
                             e.exception,
                             "common-idioms-dict-comprehension",
                             encoder=snap,
+                            mode=mode,
                         )
                     ), error()
 
@@ -862,6 +982,7 @@ def regression(self):
                             e.exception,
                             "common-idioms-chained-comparison",
                             encoder=snap,
+                            mode=mode,
                         )
                     ), error()
 
@@ -876,6 +997,7 @@ def regression(self):
                             e.exception,
                             "common-idioms-chained-str-comparison",
                             encoder=snap,
+                            mode=mode,
                         )
                     ), error()
 

@@ -1,15 +1,15 @@
 snapshot = r"""Oops! Assertion failed
 
 The following assertion was not satisfied
-  assert 0 or '' or False or None, error()
+  assert 0 or "" or False or None, error()
 
 Assertion values
-  assert 0 or '' or False or None, error()
+  assert 0 or "" or False or None, error()
            ^ is = ''
-  assert 0 or '' or False or None, error()
+  assert 0 or "" or False or None, error()
                  ^ is = False
-  assert 0 or '' or False or None, error()
+  assert 0 or "" or False or None, error()
                           ^ is = None
-  assert 0 or '' or False or None, error()
+  assert 0 or "" or False or None, error()
   ^ is False"""
 

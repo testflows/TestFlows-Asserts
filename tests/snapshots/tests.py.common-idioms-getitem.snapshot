@@ -1,13 +1,13 @@
 snapshot = r"""Oops! Assertion failed
 
 The following assertion was not satisfied
-  assert {'a':1}['a'] is False, error()
+  assert {"a": 1}["a"] is False, error()
 
 Assertion values
-  assert {'a':1}['a'] is False, error()
+  assert {"a": 1}["a"] is False, error()
          ^ is 1
-  assert {'a':1}['a'] is False, error()
-                      ^ is = False
-  assert {'a':1}['a'] is False, error()
+  assert {"a": 1}["a"] is False, error()
+                       ^ is = False
+  assert {"a": 1}["a"] is False, error()
   ^ is False"""
 

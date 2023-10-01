@@ -1,13 +1,13 @@
 snapshot = r"""Oops! Assertion failed
 
 The following assertion was not satisfied
-  assert foo(1,2,3) is False, error()
+  assert foo(1, 2, 3) is False, error()
 
 Assertion values
-  assert foo(1,2,3) is False, error()
+  assert foo(1, 2, 3) is False, error()
          ^ is = (1, 2, 3)
-  assert foo(1,2,3) is False, error()
-                    ^ is = False
-  assert foo(1,2,3) is False, error()
+  assert foo(1, 2, 3) is False, error()
+                      ^ is = False
+  assert foo(1, 2, 3) is False, error()
   ^ is False"""
 

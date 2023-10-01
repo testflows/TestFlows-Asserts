@@ -1,15 +1,70 @@
 snapshot = r"""Oops! Assertion failed
 
 The following assertion was not satisfied
-  assert foo([y*x for x in [[1],[2]] if len(x) > 0 for y in x if y > 0]) is False, error()
+  assert (
+      foo(
+          [
+              y * x
+              for x in [[1], [2]]
+              if len(x) > 0
+              for y in x
+              if y > 0
+          ]
+      )
+      is False
+  ), error()
 
 Assertion values
-  assert foo([y*x for x in [[1],[2]] if len(x) > 0 for y in x if y > 0]) is False, error()
-             ^ is [[1], [2, 2]]
-  assert foo([y*x for x in [[1],[2]] if len(x) > 0 for y in x if y > 0]) is False, error()
-         ^ is = [[1], [2, 2]]
-  assert foo([y*x for x in [[1],[2]] if len(x) > 0 for y in x if y > 0]) is False, error()
-                                                                         ^ is = False
-  assert foo([y*x for x in [[1],[2]] if len(x) > 0 for y in x if y > 0]) is False, error()
-  ^ is False"""
+  assert (
+      foo(
+          [
+          ^ is [[1], [2, 2]]
+              y * x
+              for x in [[1], [2]]
+              if len(x) > 0
+              for y in x
+              if y > 0
+          ]
+      )
+      is False
+  ), error()
+  assert (
+      foo(
+      ^ is = [[1], [2, 2]]
+          [
+              y * x
+              for x in [[1], [2]]
+              if len(x) > 0
+              for y in x
+              if y > 0
+          ]
+      )
+      is False
+  ), error()
+  assert (
+      foo(
+          [
+              y * x
+              for x in [[1], [2]]
+              if len(x) > 0
+              for y in x
+              if y > 0
+          ]
+      )
+      is False
+      ^ is = False
+  ), error()
+  assert (
+  ^ is False
+      foo(
+          [
+              y * x
+              for x in [[1], [2]]
+              if len(x) > 0
+              for y in x
+              if y > 0
+          ]
+      )
+      is False
+  ), error()"""
 
