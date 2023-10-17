@@ -93,6 +93,8 @@ def write_to_snapshot(fd, name, repr_value):
 
 def rewrite_snapshot(filename):
     """Rewrite snapshot file."""
+    if not filename.endswith(".snapshot"):
+        raise ValueError(f"{filename} is not a snapshot")
     if not os.path.exists(filename):
         raise FileNotFoundError(f"does not exist: {filename}")
 
