@@ -38,6 +38,8 @@ setup(
         "testflows.asserts",
     ],
     zip_safe=False,
-    install_requires=[],
+    install_requires=[
+        "testflows.snapshots",
+    ],
     extras_require={"dev": ["testflows.core>=1.6"]},
 )
