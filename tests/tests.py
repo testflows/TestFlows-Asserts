@@ -1003,4 +1003,4 @@ def regression(self, mode=snapshot.CHECK):
 
 
 if main():
-    Module(run=regression)
+    Module(test=regression)(mode=snapshot.CHECK)
