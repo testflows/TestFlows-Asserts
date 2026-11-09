@@ -15,6 +15,7 @@
 import ast
 import copy
 import inspect
+import sys
 import pprint
 import difflib
 import textwrap
@@ -47,6 +48,25 @@ class values(object):
         pass
 
 
+if sys.version_info >= (3, 8):
+    # ast.Num, ast.Str and ast.NameConstant are replaced by ast.Constant
+    # in Python 3.8 and are removed in Python 3.14. Only numbers, strings,
+    # None, True and False constants are simple, bytes and Ellipsis are not.
+
+    class _LiteralMeta(type):
+        def __instancecheck__(cls, node):
+            return isinstance(node, ast.Constant) and not isinstance(
+                node.value, (bytes, type(Ellipsis))
+            )
+
+    class _Literal(metaclass=_LiteralMeta):
+        pass
+
+    _literals = (_Literal,)
+else:
+    _literals = (ast.Num, ast.Str, ast.NameConstant)
+
+
 class AssertEval(ast.NodeVisitor):
     """Asssertion expression evaluator.
 
@@ -54,10 +74,7 @@ class AssertEval(ast.NodeVisitor):
     """
 
     # Known types
-    _simple = (
-        ast.Num,
-        ast.Str,
-        ast.NameConstant,
+    _simple = _literals + (
         ast.Attribute,
         ast.Call,
         ast.BinOp,
